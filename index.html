@@ -909,7 +909,7 @@ restartBtn.addEventListener('click', () => {
 });
 
 function normalize(s) {
-  return s.trim().toLowerCase().replace(/[.!?]/g, '');
+  return s.trim().toLowerCase().replace(/[.!?]/g, '').replace(/['’]/g, '');
 }
 
 function renderQuestion() {
