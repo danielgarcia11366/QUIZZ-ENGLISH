@@ -3,862 +3,453 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Briefing de Estudio — Inglés Técnico Militar</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Barlow:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<title>Inglés Técnico Militar — BHR</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-  :root {
-    --paper: #EBE6D6;
-    --paper-dark: #DCD5BE;
-    --ink: #262620;
-    --ink-soft: #55524A;
-    --olive: #3F4A30;
-    --olive-light: #5C6B46;
-    --olive-pale: #DDE3CC;
-    --khaki-line: #B7AD8F;
-    --stamp-green: #3B6B33;
-    --stamp-red: #A83A2A;
-    --amber: #B5791C;
-  }
-  * { box-sizing: border-box; }
-  html, body {
-    margin: 0;
-    padding: 0;
-    background: var(--paper);
-    font-family: 'Barlow', sans-serif;
-    color: var(--ink);
-  }
   body {
-    padding: 32px 16px 60px;
-    display: flex;
-    justify-content: center;
+    background: #1c1e1a;
+    background-image: radial-gradient(circle at 50% 0%, #2a2d24 0%, #1c1e1a 60%);
+    color: #eae6d8;
+    min-height: 100vh;
   }
-  .wrap {
-    width: 100%;
-    max-width: 640px;
-  }
-  .masthead {
-    border: 2px solid var(--ink);
-    padding: 18px 20px;
-    margin-bottom: 22px;
-    background: var(--paper-dark);
-    position: relative;
-  }
-  .masthead::before {
-    content: "";
-    position: absolute;
-    inset: 5px;
-    border: 1px solid var(--khaki-line);
-    pointer-events: none;
-  }
-  .eyebrow {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--olive);
-    margin: 0 0 6px;
-  }
-  h1 {
-    font-family: 'Oswald', sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 26px;
-    font-weight: 700;
-    margin: 0 0 8px;
-    color: var(--ink);
-  }
-  .sub {
-    font-size: 14px;
-    color: var(--ink-soft);
-    margin: 0;
-    line-height: 1.5;
-  }
+  .navbar-brand { letter-spacing: 1px; font-weight: 700; }
+  .card { background: #26281f; border: 1px solid #3d4030; color: #eae6d8; }
+  .card-muted { opacity: 0.55; }
+  .text-accent { color: #9db47a !important; }
+  .btn-accent { background: #4f6b3a; border-color: #4f6b3a; color: #fff; }
+  .btn-accent:hover { background: #5c7a43; border-color: #5c7a43; color: #fff; }
+  .btn-outline-accent { border-color: #9db47a; color: #9db47a; }
+  .btn-outline-accent:hover { background: #9db47a; color: #1c1e1a; }
+  .form-control, .form-control:focus { background: #1c1e1a; color: #eae6d8; border-color: #3d4030; }
+  .form-control:focus { box-shadow: 0 0 0 .2rem rgba(157,180,122,.25); }
+  .list-group-item { background: #1c1e1a; color: #eae6d8; border-color: #3d4030; cursor: pointer; }
+  .list-group-item:hover { background: #2a2d24; }
+  .list-group-item.selected { background: #3a4a2a; border-color: #9db47a; }
+  .list-group-item.correct { background: #2f4a2a; border-color: #6b9c4f; }
+  .list-group-item.incorrect { background: #4a2f2a; border-color: #a85c4a; }
+  .progress { background: #1c1e1a; }
 
-  .card {
-    background: var(--paper-dark);
-    border: 1.5px solid var(--ink);
-    padding: 22px 24px;
-    position: relative;
-    margin-bottom: 18px;
-  }
-
-  .rules {
-    list-style: none;
-    padding: 0;
-    margin: 16px 0 0;
-  }
-  .rules li {
-    font-size: 14px;
-    padding: 8px 0 8px 26px;
-    border-bottom: 1px dashed var(--khaki-line);
-    position: relative;
-    color: var(--ink-soft);
-  }
-  .rules li:last-child { border-bottom: none; }
-  .rules li::before {
-    content: "▸";
-    position: absolute;
-    left: 4px;
-    color: var(--olive);
-    font-weight: 700;
-  }
-  .type-legend {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 14px;
-  }
-  .type-pill {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    padding: 5px 10px;
-    border: 1px solid var(--olive);
-    color: var(--olive);
-  }
-
-  button.primary {
-    font-family: 'Oswald', sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 15px;
-    font-weight: 600;
-    background: var(--olive);
-    color: var(--paper);
-    border: none;
-    padding: 13px 24px;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 18px;
-    transition: background 0.15s ease;
-  }
-  button.primary:hover { background: var(--olive-light); }
-  button.primary:disabled { background: var(--khaki-line); cursor: not-allowed; }
-
-  button.secondary {
-    font-family: 'Space Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    background: transparent;
-    color: var(--olive);
-    border: 1px solid var(--olive);
-    padding: 9px 16px;
-    cursor: pointer;
-  }
-  button.secondary:hover { background: var(--olive-pale); }
-
-  .progressbar-row {
+  .progress-ring {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: conic-gradient(var(--ring-color, #4f6b3a) calc(var(--pct, 0) * 1%), #3d4030 0);
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
+    justify-content: center;
+    margin: 0 auto;
+    transition: background 0.4s ease;
   }
-  .progress-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 12px;
-    color: var(--ink-soft);
-    white-space: nowrap;
-  }
-  .progress-track {
-    flex: 1;
-    height: 8px;
-    background: var(--khaki-line);
-    border: 1px solid var(--ink);
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: var(--olive);
-    width: 0%;
-    transition: width 0.3s ease;
-  }
-  .score-chip {
-    font-family: 'Space Mono', monospace;
-    font-size: 12px;
-    color: var(--olive);
-    border: 1px solid var(--olive);
-    padding: 3px 8px;
-    white-space: nowrap;
-  }
-
-  .cat-tag {
-    display: inline-block;
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--olive);
-    border: 1px solid var(--olive);
-    padding: 3px 8px;
-    margin-bottom: 12px;
-  }
-  .qtype-tag {
-    display: inline-block;
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    margin-left: 8px;
-  }
-  .prompt-line {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--amber);
-    margin: 0 0 8px;
-  }
-  .sentence-box {
-    font-family: 'Space Mono', monospace;
-    font-size: 17px;
-    line-height: 1.6;
-    background: var(--paper);
-    border-left: 3px solid var(--olive);
-    padding: 12px 14px;
-    margin: 0 0 16px;
-  }
-  .sentence-box .flag {
-    color: var(--stamp-red);
-    font-weight: 700;
-  }
-  .question-text {
-    font-size: 17px;
-    line-height: 1.5;
-    margin: 0 0 18px;
-    color: var(--ink);
-  }
-  .question-text .blank {
-    display: inline-block;
-    min-width: 90px;
-    border-bottom: 2px solid var(--ink);
-    text-align: center;
-  }
-  .question-text .hint {
-    font-family: 'Space Mono', monospace;
-    font-size: 13px;
-    color: var(--amber);
-  }
-
-  .options {
+  .progress-ring-inner {
+    width: 112px;
+    height: 112px;
+    border-radius: 50%;
+    background: #1c1e1a;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-bottom: 6px;
-  }
-  .option {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
-    background: var(--paper);
-    border: 1px solid var(--khaki-line);
-    cursor: pointer;
-    font-size: 15px;
-    transition: border-color 0.15s ease, background 0.15s ease;
-  }
-  .option:hover { border-color: var(--olive); }
-  .option.selected { border-color: var(--olive); background: var(--olive-pale); }
-  .option-letter {
-    font-family: 'Space Mono', monospace;
-    font-weight: 700;
-    font-size: 13px;
-    color: var(--olive);
-    border: 1px solid var(--olive);
-    width: 22px;
-    height: 22px;
-    display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
   }
-  .option.correct { border-color: var(--stamp-green); background: #DDE9D8; }
-  .option.correct .option-letter { border-color: var(--stamp-green); color: var(--stamp-green); }
-  .option.incorrect { border-color: var(--stamp-red); background: #F1DCD7; }
-  .option.incorrect .option-letter { border-color: var(--stamp-red); color: var(--stamp-red); }
+  .progress-ring-inner .pct-value { font-size: 26px; font-weight: 700; }
+  .progress-ring-inner .pct-label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #9c9885; }
 
-  .fill-input {
-    width: 100%;
-    font-family: 'Barlow', sans-serif;
-    font-size: 16px;
-    padding: 12px 14px;
-    background: var(--paper);
-    border: 1px solid var(--khaki-line);
-    margin-bottom: 6px;
-  }
-  .fill-input:focus { outline: none; border-color: var(--olive); }
-  .fill-input.correct { border-color: var(--stamp-green); background: #DDE9D8; }
-  .fill-input.incorrect { border-color: var(--stamp-red); background: #F1DCD7; }
+  .block-card { cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease; }
+  .block-card:hover:not(.locked) { transform: translateY(-4px); border-color: #9db47a; }
+  .block-card.locked { cursor: not-allowed; }
 
-  .feedback-row {
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: 1px dashed var(--khaki-line);
-    display: none;
-  }
-  .feedback-row.show { display: block; }
-  .feedback-title {
-    font-family: 'Oswald', sans-serif;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 15px;
-    margin: 0 0 4px;
-  }
-  .feedback-title.correct { color: var(--stamp-green); }
-  .feedback-title.incorrect { color: var(--stamp-red); }
-  .feedback-note {
-    font-size: 13px;
-    color: var(--ink-soft);
-    margin: 0;
-    line-height: 1.5;
+  .floating { animation: float 3.4s ease-in-out infinite; }
+  .floating:nth-child(2) { animation-delay: 0.4s; }
+  .floating:nth-child(3) { animation-delay: 0.8s; }
+  .floating:nth-child(4) { animation-delay: 1.2s; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
   }
 
-  .stamp {
-    position: absolute;
-    top: 18px;
-    right: 18px;
-    font-family: 'Oswald', sans-serif;
-    font-weight: 700;
-    font-size: 20px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 6px 14px;
-    border: 3px solid;
-    transform: rotate(8deg);
-    opacity: 0;
-    pointer-events: none;
-  }
-  .stamp.show { opacity: 0.9; }
-  .stamp.correct { color: var(--stamp-green); border-color: var(--stamp-green); }
-  .stamp.incorrect { color: var(--stamp-red); border-color: var(--stamp-red); }
-
-  .actions-row {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 16px;
-  }
-  .actions-row button { width: auto; margin-top: 0; padding: 11px 26px; }
-
-  .result-score {
-    font-family: 'Space Mono', monospace;
-    font-size: 56px;
-    font-weight: 700;
-    color: var(--olive);
-    text-align: center;
-    margin: 6px 0 0;
-    line-height: 1;
-  }
-  .result-of {
-    text-align: center;
-    font-family: 'Space Mono', monospace;
-    font-size: 13px;
-    color: var(--ink-soft);
-    margin: 4px 0 16px;
-  }
-  .result-tier {
-    font-family: 'Oswald', sans-serif;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 18px;
-    text-align: center;
-    padding: 10px;
-    border: 2px solid var(--ink);
-    margin-bottom: 16px;
-  }
-  .breakdown-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 9px 0;
-    border-bottom: 1px dashed var(--khaki-line);
-    font-size: 13px;
-  }
-  .breakdown-row:last-child { border-bottom: none; }
-  .breakdown-cat { color: var(--ink); }
-  .breakdown-stat { font-family: 'Space Mono', monospace; color: var(--olive); }
-
-  .missed-list { margin-top: 18px; }
-  .missed-item { padding: 10px 0; border-bottom: 1px dashed var(--khaki-line); }
-  .missed-item:last-child { border-bottom: none; }
-  .missed-q { font-size: 13px; color: var(--ink-soft); margin: 0 0 4px; }
-  .missed-a { font-size: 13px; margin: 0; }
-  .missed-a b { color: var(--stamp-green); }
-
-  .footer-note {
-    text-align: center;
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    color: var(--ink-soft);
-    margin-top: 24px;
-  }
-
+  .flagged-word { color: #d98a6a; font-weight: 700; }
+  .badge-type { font-size: 11px; letter-spacing: 0.5px; }
   .hidden { display: none !important; }
+  .sentence-box { background: #1c1e1a; border-left: 3px solid #9db47a; padding: 12px 16px; font-family: 'Courier New', monospace; font-size: 17px; }
 </style>
 </head>
 <body>
-<div class="wrap">
 
-  <div class="masthead">
-    <p class="eyebrow">BHR — Material de estudio / Primer parcial</p>
-    <h1>Briefing de Inglés Técnico Militar</h1>
-    <p class="sub">82 preguntas, opciones y respuestas en inglés. Tres tipos de ejercicio: opción múltiple en contexto (incluye siglas militares), corrección de errores ortográficos y completar oraciones con presente simple, pasado simple y there is / there are.</p>
+<nav class="navbar navbar-dark" style="background:#141510; border-bottom:1px solid #3d4030;">
+  <div class="container">
+    <span class="navbar-brand mb-0 h1">🎖 Inglés Técnico Militar — BHR</span>
+    <span id="navUser" class="text-accent small"></span>
   </div>
+</nav>
 
-  <div class="card" id="startScreen">
-    <p class="eyebrow" style="margin-bottom:10px;">Instrucciones de la misión</p>
-    <ul class="rules">
-      <li>82 preguntas — todas las opciones y respuestas están en inglés.</li>
-      <li><b>Multiple choice:</b> elige el término correcto según el contexto o la sigla militar (organizaciones, rangos, armamento, vehículos, entrenamiento).</li>
-      <li><b>Spot the error:</b> una oración usa un término mal escrito en MAYÚSCULAS — elige la ortografía correcta.</li>
-      <li><b>Fill in the blank:</b> escribe el verbo conjugado correctamente — presente simple, pasado simple, o there is/are — there was/were.</li>
-      <li>Al final verás tu punteo, tu nivel y un desglose por categoría.</li>
-    </ul>
-    <div class="type-legend">
-      <span class="type-pill">Multiple choice</span>
-      <span class="type-pill">Spot the error</span>
-      <span class="type-pill">Fill in the blank</span>
-    </div>
-    <button class="primary" id="startBtn">Iniciar cuestionario</button>
-  </div>
+<div class="container py-5">
 
-  <div id="quizScreen" class="hidden">
-    <div class="progressbar-row">
-      <span class="progress-label" id="progressLabel">ITEM 01/50</span>
-      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-      <span class="score-chip" id="scoreChip">0 PTS</span>
-    </div>
-
-    <div class="card" id="questionCard">
-      <div class="stamp" id="stamp">CORRECT</div>
-      <span class="cat-tag" id="catTag">CATEGORY</span>
-      <span class="qtype-tag" id="qtypeTag"></span>
-
-      <div id="sentenceWrap" class="hidden">
-        <p class="prompt-line">Choose the correct spelling for the flagged word</p>
-        <p class="sentence-box" id="sentenceBox"></p>
-      </div>
-
-      <p class="question-text" id="questionText"></p>
-
-      <div id="mcOptions" class="options hidden"></div>
-      <div id="fillArea" class="hidden">
-        <input type="text" class="fill-input" id="fillInput" placeholder="Type your answer here" autocomplete="off">
-      </div>
-
-      <div class="feedback-row" id="feedbackRow">
-        <p class="feedback-title" id="feedbackTitle"></p>
-        <p class="feedback-note" id="feedbackNote"></p>
-      </div>
-
-      <div class="actions-row">
-        <button class="primary" id="actionBtn" style="width:auto;">Comprobar respuesta</button>
+  <!-- ===== NAME SCREEN ===== -->
+  <div id="screenName" class="row justify-content-center">
+    <div class="col-12 col-md-6 col-lg-5">
+      <div class="card p-4 shadow">
+        <h4 class="mb-1">Bienvenido, soldado</h4>
+        <p class="text-secondary small mb-4">Escribe tu nombre para cargar o crear tu progreso.</p>
+        <div class="mb-3">
+          <input type="text" id="nameInput" class="form-control form-control-lg" placeholder="Ej. DANIEL" autocomplete="off">
+        </div>
+        <button id="nameSubmit" class="btn btn-accent btn-lg w-100">Ingresar</button>
+        <div id="nameStatus" class="small text-secondary mt-3"></div>
       </div>
     </div>
   </div>
 
-  <div id="resultsScreen" class="card hidden">
-    <p class="eyebrow" style="text-align:center;">Informe final</p>
-    <p class="result-score" id="resultScore">0</p>
-    <p class="result-of" id="resultOf">DE 50 PUNTOS</p>
-    <div class="result-tier" id="resultTier">—</div>
-
-    <p class="eyebrow" style="margin-top:20px;">Desglose por categoría</p>
-    <div class="breakdown" id="breakdown"></div>
-
-    <div id="missedWrap" class="missed-list hidden">
-      <p class="eyebrow" style="margin-top:20px;">Repaso de fallos</p>
-      <div id="missedList"></div>
-    </div>
-
-    <button class="secondary" id="restartBtn" style="margin-top:22px; width:100%;">Reiniciar cuestionario</button>
+  <!-- ===== DASHBOARD SCREEN ===== -->
+  <div id="screenDashboard" class="hidden">
+    <h3 class="mb-1">Hola, <span id="dashName" class="text-accent"></span></h3>
+    <p class="text-secondary mb-5">Selecciona un bloque para comenzar o continuar tu entrenamiento. Tu progreso se guarda automáticamente.</p>
+    <div class="row g-4" id="blocksRow"></div>
   </div>
 
-  <p class="footer-note">MATERIAL DE ESTUDIO — INGLÉS TÉCNICO MILITAR — USO PERSONAL</p>
+  <!-- ===== QUIZ SCREEN ===== -->
+  <div id="screenQuiz" class="hidden">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <button class="btn btn-sm btn-outline-accent" id="backToDashboard">&larr; Volver al panel</button>
+      <span class="text-secondary small" id="quizProgressLabel"></span>
+    </div>
+    <div class="progress mb-4" style="height:8px;">
+      <div class="progress-bar bg-success" id="quizProgressBar" style="width:0%"></div>
+    </div>
+
+    <div class="card p-4 shadow">
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <span class="badge bg-secondary badge-type" id="catTag"></span>
+        <span class="badge bg-dark border badge-type" id="typeTag"></span>
+      </div>
+
+      <div id="sentenceWrap" class="hidden mb-3">
+        <p class="text-secondary small mb-2 text-uppercase">Elige la ortografía correcta de la palabra marcada</p>
+        <p class="sentence-box mb-0" id="sentenceBox"></p>
+      </div>
+
+      <p class="fs-5 mb-3" id="questionText"></p>
+
+      <div id="mcOptions" class="list-group hidden mb-2"></div>
+      <div id="fillArea" class="hidden mb-2">
+        <input type="text" class="form-control form-control-lg" id="fillInput" placeholder="Escribe tu respuesta" autocomplete="off">
+      </div>
+
+      <div id="feedbackBox" class="alert mt-3 hidden" role="alert">
+        <strong id="feedbackTitle"></strong>
+        <p class="mb-0 small" id="feedbackNote"></p>
+      </div>
+
+      <div class="text-end mt-3">
+        <button class="btn btn-accent px-4" id="actionBtn">Comprobar respuesta</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== RESULTS SCREEN ===== -->
+  <div id="screenResults" class="hidden">
+    <div class="card p-5 text-center shadow">
+      <p class="text-secondary text-uppercase small mb-1">Resultado del bloque</p>
+      <h1 class="display-3 fw-bold text-accent mb-0" id="resScore">0%</h1>
+      <p class="text-secondary mb-4" id="resDetail"></p>
+      <div class="alert" id="resTier" role="alert"></div>
+      <div id="resMissed" class="text-start mt-3"></div>
+      <button class="btn btn-accent mt-4" id="resBackBtn">Volver al panel</button>
+    </div>
+  </div>
+
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-const QUESTIONS = [
-  // ---------- SPOT THE ERROR (20) ----------
-  { cat: "Spelling — Peacekeeping", type: "correction",
-    sentence: "I am a PEACEKEPER.", flagged: "PEACEKEPER",
-    options: ["Peacekeeper", "PazKeapear", "PeaceKipping"], correct: 0,
-    explain: "\"Peacekeeper\" has a double e: peace + keep + er." },
-  { cat: "Spelling — Equipment", type: "correction",
-    sentence: "The soldier packed his RUKSACK before the march.", flagged: "RUKSACK",
-    options: ["Rucksack", "Ruckssak", "Ruksuck"], correct: 0,
-    explain: "\"Rucksack\" is spelled with \"ck\", not just \"k\"." },
-  { cat: "Spelling — Training", type: "correction",
-    sentence: "The recruits slept in the BARAKS last night.", flagged: "BARAKS",
-    options: ["Barracks", "Barraks", "Barrackes"], correct: 0,
-    explain: "\"Barracks\" has a double r and a double c." },
-  { cat: "Spelling — Weapons", type: "correction",
-    sentence: "The Captain checked the AMUNITION supply.", flagged: "AMUNITION",
-    options: ["Ammunition", "Amunition", "Amonition"], correct: 0,
-    explain: "\"Ammunition\" has a double m." },
-  { cat: "Spelling — Equipment", type: "correction",
-    sentence: "The unit used a CAMOFLAGE net to hide the vehicle.", flagged: "CAMOFLAGE",
-    options: ["Camouflage", "Camoflague", "Camuflage"], correct: 0,
-    explain: "\"Camouflage\" is spelled c-a-m-o-u-f-l-a-g-e, with \"ou\"." },
-  { cat: "Spelling — Medical", type: "correction",
-    sentence: "The medic treated the CASUALTIE after the explosion.", flagged: "CASUALTIE",
-    options: ["Casualty", "Casualtie", "Casulty"], correct: 0,
-    explain: "\"Casualty\" ends in -alty, not -altie." },
-  { cat: "Spelling — Uniforms", type: "correction",
-    sentence: "The soldiers wore their HELLMET during the exercise.", flagged: "HELLMET",
-    options: ["Helmet", "Hellmet", "Helmit"], correct: 0,
-    explain: "\"Helmet\" has a single l." },
-  { cat: "Spelling — Training", type: "correction",
-    sentence: "The platoon crossed the OBSTICLE COURSE in record time.", flagged: "OBSTICLE",
-    options: ["Obstacle", "Obsticle", "Obstakle"], correct: 0,
-    explain: "\"Obstacle\" is spelled with \"a\" in the second syllable: ob-sta-cle." },
-  { cat: "Spelling — Training", type: "correction",
-    sentence: "The NCO gave the order during DRIL practice.", flagged: "DRIL",
-    options: ["Drill", "Dril", "Drille"], correct: 0,
-    explain: "\"Drill\" has a double l." },
-  { cat: "Spelling — Training", type: "correction",
-    sentence: "The BUGGLE sounded at dawn to wake the recruits.", flagged: "BUGGLE",
-    options: ["Bugle", "Buggle", "Bugel"], correct: 0,
-    explain: "\"Bugle\" has a single g: b-u-g-l-e." },
-  { cat: "Spelling — Training", type: "correction",
-    sentence: "REVEILE is played every morning at the base.", flagged: "REVEILE",
-    options: ["Reveille", "Reveile", "Revellie"], correct: 0,
-    explain: "\"Reveille\" is spelled r-e-v-e-i-l-l-e, with a double l before the final e." },
-  { cat: "Spelling — Navigation", type: "correction",
-    sentence: "The scout used a COMPAS to find north.", flagged: "COMPAS",
-    options: ["Compass", "Compase", "Compaz"], correct: 0,
-    explain: "\"Compass\" has a double s at the end." },
-  { cat: "Spelling — Navigation", type: "correction",
-    sentence: "The technician repaired the radio's ANTENA.", flagged: "ANTENA",
-    options: ["Antenna", "Antenaa", "Antennae"], correct: 0,
-    explain: "\"Antenna\" has a double n: an-ten-na." },
-  { cat: "Spelling — Weapons", type: "correction",
-    sentence: "He kept his pistol in the HOLDSTER on his belt.", flagged: "HOLDSTER",
-    options: ["Holster", "Holdster", "Holstar"], correct: 0,
-    explain: "\"Holster\" has no d — it's h-o-l-s-t-e-r." },
-  { cat: "Spelling — Rangos", type: "correction",
-    sentence: "The RIFFLEMEN moved forward under cover fire.", flagged: "RIFFLEMEN",
-    options: ["Riflemen", "Rifflemen", "Riflemens"], correct: 0,
-    explain: "\"Riflemen\" has a single f, and the plural does not add -s at the end." },
-  { cat: "Spelling — Operaciones", type: "correction",
-    sentence: "The police had to DETAIN the suspect at the checkpoint.", flagged: "DETAIN",
-    options: ["Detain", "Deetain", "Detayn"], correct: 0,
-    explain: "This one is actually spelled correctly: \"detain\" — a single e in each syllable, no extra letters." },
-  { cat: "Spelling — Operaciones", type: "correction",
-    sentence: "Thousands of REFUGES crossed the border after the conflict.", flagged: "REFUGES",
-    options: ["Refugees", "Refuges", "Refugies"], correct: 0,
-    explain: "\"Refugees\" ends in -gees, with a double e before the plural s." },
-  { cat: "Spelling — Operaciones", type: "correction",
-    sentence: "Both sides agreed to a CEESFIRE after the negotiations.", flagged: "CEESFIRE",
-    options: ["Ceasefire", "Ceesfire", "Ceacefire"], correct: 0,
-    explain: "\"Ceasefire\" starts with \"cease\", not \"ceese\" or \"ceace\"." },
-  { cat: "Spelling — Operaciones", type: "correction",
-    sentence: "The BUFER ZONE kept the two armies apart.", flagged: "BUFER",
-    options: ["Buffer", "Bufer", "Buffar"], correct: 0,
-    explain: "\"Buffer\" has a double f." },
-  { cat: "Spelling — Weapons", type: "correction",
-    sentence: "The rifle was fitted with a BAYONNET for close combat.", flagged: "BAYONNET",
-    options: ["Bayonet", "Bayonnet", "Bayonett"], correct: 0,
-    explain: "\"Bayonet\" has a single n and a single t: b-a-y-o-n-e-t." },
+// ============ FIREBASE ============
+const firebaseConfig = {
+  apiKey: "AIzaSyANpCV0fX8_EToO4qkytF4PZUsCnpHV8JA",
+  authDomain: "ingles-militar.firebaseapp.com",
+  projectId: "ingles-militar",
+  storageBucket: "ingles-militar.firebasestorage.app",
+  messagingSenderId: "882776533982",
+  appId: "1:882776533982:web:9e81b4c143773cd27e0b4f",
+  measurementId: "G-88FYJLPSQD"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-  // ---------- MULTIPLE CHOICE IN CONTEXT (15) ----------
-  { cat: "Abbreviations", type: "mc",
-    text: "What is the correct expansion of NCO?",
-    options: ["Non-Commissioned Officer", "National Command Office", "New Combat Officer", "Non-Combat Operative"],
-    correct: 0 },
-  { cat: "Vehicles", type: "mc",
-    text: "APC stands for:",
-    options: ["Armored Personnel Carrier", "Armed Patrol Convoy", "Air Personnel Command", "Assault Personnel Carrier"],
-    correct: 0 },
-  { cat: "Uniforms", type: "mc",
-    text: "\"He packed only his Fighting Order for the short patrol.\" What does \"Fighting Order\" mean?",
-    options: ["The minimum kit a soldier carries", "The full kit with everything needed", "The dress uniform for parades", "A set of combat rations"],
-    correct: 0 },
-  { cat: "Uniforms", type: "mc",
-    text: "\"For the long deployment, every soldier carried the full Marching Order.\" What does \"Marching Order\" mean?",
-    options: ["The minimum kit a soldier carries", "The full kit with everything the soldier needs", "The order in which units march in a parade", "A route drawn on a map"],
-    correct: 1 },
-  { cat: "Navigation", type: "mc",
-    text: "GPS stands for:",
-    options: ["Global Positioning System", "General Position System", "Ground Patrol System", "Global Patrol Signal"],
-    correct: 0 },
-  { cat: "Peacekeeping", type: "mc",
-    text: "\"She has served as a peacekeeper in three different missions.\" Which word best fits this description?",
-    options: ["A soldier who helps keep peace in a conflict zone", "A civilian who has fled a conflict zone", "A person held for questioning", "A military observer with no weapon"],
-    correct: 0 },
-  { cat: "Peacekeeping", type: "mc",
-    text: "UXO stands for:",
-    options: ["Unexploded Ordnance", "Unified Explosive Operation", "Unarmed Extraction Object", "Unexploded Object"],
-    correct: 0 },
-  { cat: "Peacekeeping", type: "mc",
-    text: "\"A buffer zone was set up between the two armies.\" What is a buffer zone?",
-    options: ["An area that separates opposing forces", "A combat training area", "A restricted weapons storage area", "A refugee camp"],
-    correct: 0 },
-  { cat: "Peacekeeping", type: "mc",
-    text: "EOD stands for:",
-    options: ["Explosive Ordnance Disposal", "Emergency Ordnance Division", "Explosive Object Detection", "Emergency Operations Deployment"],
-    correct: 0 },
-  { cat: "Peacekeeping", type: "mc",
-    text: "\"Both sides signed a truce after months of fighting.\" What does \"truce\" mean?",
-    options: ["A temporary agreement to stop fighting", "A permanent peace treaty", "A military alliance", "A ceasefire violation"],
-    correct: 0 },
-  { cat: "Peacekeeping", type: "mc",
-    text: "TCC stands for:",
-    options: ["Troop Contributing Countries", "Tactical Combat Command", "Training and Combat Center", "Troop Command Council"],
-    correct: 0 },
-  { cat: "Peacekeeping", type: "mc",
-    text: "\"Thousands of refugees crossed the border after the conflict.\" Who are refugees?",
-    options: ["Civilians forced to flee a conflict or disaster", "Soldiers who abandon their post", "Peacekeepers on leave", "Detained combatants"],
-    correct: 0 },
-  { cat: "Vehicles", type: "mc",
-    text: "IFV stands for:",
-    options: ["Infantry Fighting Vehicle", "Infantry Field Vehicle", "Individual Fighting Vehicle", "Infantry Force Vehicle"],
-    correct: 0 },
-  { cat: "Peacekeeping", type: "mc",
-    text: "\"The engineers spent the day demining the old battlefield.\" What does \"demining\" mean?",
-    options: ["Removing landmines from an area", "Disarming enemy soldiers", "Detaining suspects at a checkpoint", "Deploying troops to a new zone"],
-    correct: 0 },
-  { cat: "Weapons", type: "mc",
-    text: "\"This rifle has a higher rate of fire than the older model.\" What does \"rate of fire\" measure?",
-    options: ["How fast a weapon fires", "How far a bullet travels", "How heavy a weapon is", "How many rounds a magazine holds"],
-    correct: 0 },
+// ============ QUESTION BANK ============
+const QUESTION_BANK = {
+  block1: {
+    title: "Bloque 1",
+    subtitle: "Ortografía y abreviaturas",
+    locked: false,
+    questions: [
+      { cat: "Spelling", type: "correction", sentence: "I am a PEACEKEPER.", flagged: "PEACEKEPER",
+        options: ["Peacekeeper", "PazKeapear", "PeaceKipping"], correct: 0,
+        explain: "\"Peacekeeper\" has a double e: peace + keep + er." },
+      { cat: "Spelling", type: "correction", sentence: "The soldier packed his RUKSACK before the march.", flagged: "RUKSACK",
+        options: ["Rucksack", "Ruckssak", "Ruksuck"], correct: 0,
+        explain: "\"Rucksack\" is spelled with \"ck\", not just \"k\"." },
+      { cat: "Spelling", type: "correction", sentence: "The recruits slept in the BARAKS last night.", flagged: "BARAKS",
+        options: ["Barracks", "Barraks", "Barrackes"], correct: 0,
+        explain: "\"Barracks\" has a double r and a double c." },
+      { cat: "Spelling", type: "correction", sentence: "The Captain checked the AMUNITION supply.", flagged: "AMUNITION",
+        options: ["Ammunition", "Amunition", "Amonition"], correct: 0,
+        explain: "\"Ammunition\" has a double m." },
+      { cat: "Spelling", type: "correction", sentence: "The unit used a CAMOFLAGE net to hide the vehicle.", flagged: "CAMOFLAGE",
+        options: ["Camouflage", "Camoflague", "Camuflage"], correct: 0,
+        explain: "\"Camouflage\" is spelled c-a-m-o-u-f-l-a-g-e, with \"ou\"." },
+      { cat: "Spelling", type: "correction", sentence: "The medic treated the CASUALTIE after the explosion.", flagged: "CASUALTIE",
+        options: ["Casualty", "Casualtie", "Casulty"], correct: 0,
+        explain: "\"Casualty\" ends in -alty, not -altie." },
+      { cat: "Spelling", type: "correction", sentence: "The soldiers wore their HELLMET during the exercise.", flagged: "HELLMET",
+        options: ["Helmet", "Hellmet", "Helmit"], correct: 0,
+        explain: "\"Helmet\" has a single l." },
+      { cat: "Spelling", type: "correction", sentence: "The platoon crossed the OBSTICLE COURSE in record time.", flagged: "OBSTICLE",
+        options: ["Obstacle", "Obsticle", "Obstakle"], correct: 0,
+        explain: "\"Obstacle\" is spelled ob-sta-cle, with \"a\" in the second syllable." },
+      { cat: "Spelling", type: "correction", sentence: "The NCO gave the order during DRIL practice.", flagged: "DRIL",
+        options: ["Drill", "Dril", "Drille"], correct: 0,
+        explain: "\"Drill\" has a double l." },
+      { cat: "Spelling", type: "correction", sentence: "The BUGGLE sounded at dawn to wake the recruits.", flagged: "BUGGLE",
+        options: ["Bugle", "Buggle", "Bugel"], correct: 0,
+        explain: "\"Bugle\" has a single g: b-u-g-l-e." },
+      { cat: "Spelling", type: "correction", sentence: "REVEILE is played every morning at the base.", flagged: "REVEILE",
+        options: ["Reveille", "Reveile", "Revellie"], correct: 0,
+        explain: "\"Reveille\" is spelled with a double l before the final e: r-e-v-e-i-l-l-e." },
+      { cat: "Spelling", type: "correction", sentence: "The scout used a COMPAS to find north.", flagged: "COMPAS",
+        options: ["Compass", "Compase", "Compaz"], correct: 0,
+        explain: "\"Compass\" has a double s at the end." },
+      { cat: "Spelling", type: "correction", sentence: "The technician repaired the radio's ANTENA.", flagged: "ANTENA",
+        options: ["Antenna", "Antenaa", "Antennae"], correct: 0,
+        explain: "\"Antenna\" has a double n: an-ten-na." },
+      { cat: "Spelling", type: "correction", sentence: "He kept his pistol in the HOLDSTER on his belt.", flagged: "HOLDSTER",
+        options: ["Holster", "Holdster", "Holstar"], correct: 0,
+        explain: "\"Holster\" has no d: h-o-l-s-t-e-r." },
+      { cat: "Spelling", type: "correction", sentence: "The RIFFLEMEN moved forward under cover fire.", flagged: "RIFFLEMEN",
+        options: ["Riflemen", "Rifflemen", "Riflemens"], correct: 0,
+        explain: "\"Riflemen\" has a single f, and the plural takes no extra -s." },
+      { cat: "Spelling", type: "correction", sentence: "The police had to DETAIN the suspect at the checkpoint.", flagged: "DETAIN",
+        options: ["Detain", "Deetain", "Detayn"], correct: 0,
+        explain: "This word is already spelled correctly: \"detain\"." },
+      { cat: "Spelling", type: "correction", sentence: "Thousands of REFUGES crossed the border after the conflict.", flagged: "REFUGES",
+        options: ["Refugees", "Refuges", "Refugies"], correct: 0,
+        explain: "\"Refugees\" ends in -gees, with a double e before the plural s." },
+      { cat: "Spelling", type: "correction", sentence: "Both sides agreed to a CEESFIRE after the negotiations.", flagged: "CEESFIRE",
+        options: ["Ceasefire", "Ceesfire", "Ceacefire"], correct: 0,
+        explain: "\"Ceasefire\" starts with \"cease\", not \"ceese\" or \"ceace\"." },
+      { cat: "Spelling", type: "correction", sentence: "The BUFER ZONE kept the two armies apart.", flagged: "BUFER",
+        options: ["Buffer", "Bufer", "Buffar"], correct: 0,
+        explain: "\"Buffer\" has a double f." },
+      { cat: "Spelling", type: "correction", sentence: "The rifle was fitted with a BAYONNET for close combat.", flagged: "BAYONNET",
+        options: ["Bayonet", "Bayonnet", "Bayonett"], correct: 0,
+        explain: "\"Bayonet\" has a single n and a single t: b-a-y-o-n-e-t." },
+      { cat: "Abbreviations", type: "mc", text: "What is the correct expansion of NCO?",
+        options: ["Non-Commissioned Officer", "National Command Office", "New Combat Officer", "Non-Combat Operative"], correct: 0 },
+      { cat: "Abbreviations", type: "mc", text: "APC stands for:",
+        options: ["Armored Personnel Carrier", "Armed Patrol Convoy", "Air Personnel Command", "Assault Personnel Carrier"], correct: 0 },
+      { cat: "Abbreviations", type: "mc", text: "GPS stands for:",
+        options: ["Global Positioning System", "General Position System", "Ground Patrol System", "Global Patrol Signal"], correct: 0 },
+      { cat: "Abbreviations", type: "mc", text: "UXO stands for:",
+        options: ["Unexploded Ordnance", "Unified Explosive Operation", "Unarmed Extraction Object", "Unexploded Object"], correct: 0 },
+      { cat: "Abbreviations", type: "mc", text: "IFV stands for:",
+        options: ["Infantry Fighting Vehicle", "Infantry Field Vehicle", "Individual Fighting Vehicle", "Infantry Force Vehicle"], correct: 0 }
+    ]
+  },
+  block2: {
+    title: "Bloque 2",
+    subtitle: "Contexto y gramática básica",
+    locked: false,
+    questions: [
+      { cat: "Context", type: "mc", text: "\"He packed only his Fighting Order for the short patrol.\" What does \"Fighting Order\" mean?",
+        options: ["The minimum kit a soldier carries", "The full kit with everything needed", "The dress uniform for parades", "A set of combat rations"], correct: 0 },
+      { cat: "Context", type: "mc", text: "\"For the long deployment, every soldier carried the full Marching Order.\" What does \"Marching Order\" mean?",
+        options: ["The minimum kit a soldier carries", "The full kit with everything the soldier needs", "The order in which units march in a parade", "A route drawn on a map"], correct: 1 },
+      { cat: "Context", type: "mc", text: "\"She has served as a peacekeeper in three different missions.\" Which best describes a peacekeeper?",
+        options: ["A soldier who helps keep peace in a conflict zone", "A civilian who has fled a conflict zone", "A person held for questioning", "A military observer with no weapon"], correct: 0 },
+      { cat: "Context", type: "mc", text: "\"A buffer zone was set up between the two armies.\" What is a buffer zone?",
+        options: ["An area that separates opposing forces", "A combat training area", "A restricted weapons storage area", "A refugee camp"], correct: 0 },
+      { cat: "Context", type: "mc", text: "EOD stands for:",
+        options: ["Explosive Ordnance Disposal", "Emergency Ordnance Division", "Explosive Object Detection", "Emergency Operations Deployment"], correct: 0 },
+      { cat: "Context", type: "mc", text: "\"Both sides signed a truce after months of fighting.\" What does \"truce\" mean?",
+        options: ["A temporary agreement to stop fighting", "A permanent peace treaty", "A military alliance", "A ceasefire violation"], correct: 0 },
+      { cat: "Context", type: "mc", text: "TCC stands for:",
+        options: ["Troop Contributing Countries", "Tactical Combat Command", "Training and Combat Center", "Troop Command Council"], correct: 0 },
+      { cat: "Context", type: "mc", text: "\"Thousands of refugees crossed the border after the conflict.\" Who are refugees?",
+        options: ["Civilians forced to flee a conflict or disaster", "Soldiers who abandon their post", "Peacekeepers on leave", "Detained combatants"], correct: 0 },
+      { cat: "Context", type: "mc", text: "\"The engineers spent the day demining the old battlefield.\" What does \"demining\" mean?",
+        options: ["Removing landmines from an area", "Disarming enemy soldiers", "Detaining suspects at a checkpoint", "Deploying troops to a new zone"], correct: 0 },
+      { cat: "Context", type: "mc", text: "\"This rifle has a higher rate of fire than the older model.\" What does \"rate of fire\" measure?",
+        options: ["How fast a weapon fires", "How far a bullet travels", "How heavy a weapon is", "How many rounds a magazine holds"], correct: 0 },
 
-  // ---------- ABBREVIATIONS — Organizaciones y Términos Generales (11) ----------
-  { cat: "Abbreviations — Organizations", type: "mc",
-    text: "STANAG stands for:",
-    options: ["Standardization Agreement", "Strategic National Agreement", "Standard NATO Guideline", "State Alliance Agreement"],
-    correct: 0 },
-  { cat: "Abbreviations — Organizations", type: "mc",
-    text: "NATO stands for:",
-    options: ["North Atlantic Treaty Organization", "National Alliance Treaty Organization", "North American Treaty Organization", "New Atlantic Trade Organization"],
-    correct: 0 },
-  { cat: "Abbreviations — Organizations", type: "mc",
-    text: "UN stands for:",
-    options: ["United Nations", "United Nationalities", "Unified Nations", "United Neutral States"],
-    correct: 0 },
-  { cat: "Abbreviations — Organizations", type: "mc",
-    text: "CEO stands for:",
-    options: ["Chief Executive Officer", "Central Executive Office", "Chief Enlisted Officer", "Command Executive Officer"],
-    correct: 0 },
-  { cat: "Abbreviations — Organizations", type: "mc",
-    text: "VIP stands for:",
-    options: ["Very Important Person", "Verified Individual Passenger", "Vital Information Post", "Very Important Post"],
-    correct: 0 },
-  { cat: "Abbreviations — Organizations", type: "mc",
-    text: "SOP stands for:",
-    options: ["Standard Operational Procedures", "Special Operations Platoon", "Strategic Operations Plan", "Standard Order of Procedure"],
-    correct: 0 },
-  { cat: "Abbreviations — Organizations", type: "mc",
-    text: "HQ stands for:",
-    options: ["Headquarters", "High Quarters", "Home Quarters", "Head Quota"],
-    correct: 0 },
-  { cat: "Abbreviations — Organizations", type: "mc",
-    text: "PX stands for:",
-    options: ["Post Exchange", "Personnel Extraction", "Patrol Exercise", "Physical Examination"],
-    correct: 0 },
-  { cat: "Abbreviations — Organizations", type: "mc",
-    text: "BX stands for:",
-    options: ["Base Exchange", "Battalion Exercise", "Border Exchange", "Basic Exercise"],
-    correct: 0 },
-  { cat: "Abbreviations — Organizations", type: "mc",
-    text: "Km is the abbreviation for:",
-    options: ["Kilometer", "Kilogram", "Kilometric", "Knot Meter"],
-    correct: 0 },
-  { cat: "Abbreviations — Organizations", type: "mc",
-    text: "GP stands for:",
-    options: ["General Purpose", "Ground Patrol", "General Personnel", "Group Position"],
-    correct: 0 },
+      { cat: "Grammar — Present simple", type: "fill",
+        text: "Every morning, the recruit {blank} (hear) the Bugle at Reveille.",
+        hint: "presente simple, sujeto singular", answers: ["hears"],
+        explain: "Sujeto singular (\"the recruit\") en presente simple: hear → hears." },
+      { cat: "Grammar — Present simple", type: "fill",
+        text: "The peacekeepers {blank} (patrol) the Buffer Zone every day.",
+        hint: "presente simple, sujeto plural", answers: ["patrol"],
+        explain: "Sujeto plural usa el verbo en forma base, sin -s." },
+      { cat: "Grammar — Present simple", type: "fill",
+        text: "The Sergeant always {blank} (maintain) discipline in the unit.",
+        hint: "presente simple, sujeto singular", answers: ["maintains"],
+        explain: "Sujeto singular \"the Sergeant\": maintain → maintains." },
+      { cat: "Grammar — Past simple", type: "fill",
+        text: "Last week, the Captain {blank} (promote) two corporals to sergeant.",
+        hint: "pasado simple", answers: ["promoted"],
+        explain: "\"Last week\" indica pasado simple: promote → promoted." },
+      { cat: "Grammar — Present simple", type: "fill",
+        text: "The platoon leader always {blank} (check) the equipment list before departure.",
+        hint: "presente simple, sujeto singular", answers: ["checks"],
+        explain: "Sujeto singular: check → checks." },
+      { cat: "Grammar — Past simple", type: "fill",
+        text: "Yesterday, the recruits {blank} (clean) their rifles after the exercise.",
+        hint: "pasado simple", answers: ["cleaned"],
+        explain: "\"Yesterday\" indica pasado simple: clean → cleaned." },
+      { cat: "Grammar — Present simple", type: "fill",
+        text: "During ceremonies, soldiers {blank} (not / wear) full combat gear.",
+        hint: "negación, presente simple", answers: ["do not wear", "don't wear"],
+        explain: "Negación en presente simple con sujeto plural: do not + verbo base." },
+      { cat: "Grammar — Past simple", type: "fill",
+        text: "The recruits {blank} (arrive) at the barracks an hour ago.",
+        hint: "pasado simple", answers: ["arrived"],
+        explain: "\"An hour ago\" indica pasado simple: arrive → arrived." },
+      { cat: "Grammar — Past simple", type: "fill",
+        text: "The platoon {blank} (secure) the area while the medic treated the casualty.",
+        hint: "pasado simple", answers: ["secured"],
+        explain: "Acción pasada simple: secure → secured." },
+      { cat: "Grammar — There is / There are", type: "fill",
+        text: "There {blank} (is/are) a Checkpoint at the entrance of the camp.",
+        hint: "there + is/are, sujeto singular", answers: ["is"],
+        explain: "\"A Checkpoint\" es singular, entonces va \"There is\"." },
+      { cat: "Grammar — There is / There are", type: "fill",
+        text: "There {blank} (is/are) three Peacekeepers guarding the gate.",
+        hint: "there + is/are, sujeto plural", answers: ["are"],
+        explain: "\"Three Peacekeepers\" es plural, entonces va \"There are\"." },
+      { cat: "Grammar — There is / There are", type: "fill",
+        text: "There {blank} (is/are) no Casualties reported after the patrol.",
+        hint: "there + is/are, sujeto plural negativo", answers: ["are"],
+        explain: "\"Casualties\" es plural, entonces va \"There are no...\"." },
+      { cat: "Grammar — There is / There are", type: "fill",
+        text: "There {blank} (is/are) a Buffer Zone between the two camps.",
+        hint: "there + is/are, sujeto singular", answers: ["is"],
+        explain: "\"A Buffer Zone\" es singular, entonces va \"There is\"." },
+      { cat: "Grammar — There is / There are", type: "fill",
+        text: "There {blank} (is/are) not enough Water Bottles for the whole platoon.",
+        hint: "there + is/are, sujeto plural", answers: ["are"],
+        explain: "\"Water Bottles\" es plural, entonces va \"There are not enough...\"." },
+      { cat: "Grammar — There is / There are", type: "fill",
+        text: "{blank} (Is/Are) there any UXO reported in this sector?",
+        hint: "pregunta con is/are", answers: ["Is", "is"],
+        explain: "\"UXO\" (Unexploded Ordnance) se trata como singular/incontable en este contexto: \"Is there any UXO...?\"." }
+    ]
+  },
+  block3: { title: "Bloque 3", subtitle: "Próximamente", locked: true, questions: [] },
+  block4: { title: "Bloque 4", subtitle: "Próximamente", locked: true, questions: [] }
+};
 
-  // ---------- ABBREVIATIONS — Rangos, Personal y Unidades (6) ----------
-  { cat: "Abbreviations — Ranks & Units", type: "mc",
-    text: "2IC stands for:",
-    options: ["Second In Command", "Second Infantry Company", "Second Intelligence Corps", "Second In Combat"],
-    correct: 0 },
-  { cat: "Abbreviations — Ranks & Units", type: "mc",
-    text: "CO stands for:",
-    options: ["Commanding Officer", "Combat Operative", "Company Officer", "Command Order"],
-    correct: 0 },
-  { cat: "Abbreviations — Ranks & Units", type: "mc",
-    text: "CPL is the abbreviation for:",
-    options: ["Corporal", "Captain", "Colonel", "Corps Leader"],
-    correct: 0 },
-  { cat: "Abbreviations — Ranks & Units", type: "mc",
-    text: "Col is the abbreviation for:",
-    options: ["Colonel", "Corporal", "Command", "Column"],
-    correct: 0 },
-  { cat: "Abbreviations — Ranks & Units", type: "mc",
-    text: "Capt is the abbreviation for:",
-    options: ["Captain", "Corporal", "Commandant", "Colonel"],
-    correct: 0 },
-  { cat: "Abbreviations — Ranks & Units", type: "mc",
-    text: "COY is the abbreviation for:",
-    options: ["Company", "Colony", "Convoy", "Corps"],
-    correct: 0 },
-
-  // ---------- ABBREVIATIONS — Armamento y Munición (2) ----------
-  { cat: "Abbreviations — Weapons", type: "mc",
-    text: "SA80 refers to:",
-    options: ["The standard rifle of the British Army (L85)", "A type of hand grenade", "A radio frequency band", "A type of body armour"],
-    correct: 0 },
-  { cat: "Abbreviations — Weapons", type: "mc",
-    text: "LSW stands for:",
-    options: ["Light Support Weapon", "Long Service Weapon", "Light Signal Warning", "Land Surface Weapon"],
-    correct: 0 },
-
-  // ---------- ABBREVIATIONS — Entrenamiento y Vida Militar (4) ----------
-  { cat: "Abbreviations — Training", type: "mc",
-    text: "BCT stands for:",
-    options: ["Basic Combat Training", "Battalion Combat Team", "Basic Command Training", "Border Control Team"],
-    correct: 0 },
-  { cat: "Abbreviations — Training", type: "mc",
-    text: "USA BCT refers to:",
-    options: ["United States Basic Combat Training", "United States Border Control Team", "United States Battalion Combat Training", "United States Base Command Training"],
-    correct: 0 },
-  { cat: "Abbreviations — Training", type: "mc",
-    text: "FTX stands for:",
-    options: ["Field Training Exercise", "Full Tactical Exercise", "Forward Training Extension", "Field Tactical Extraction"],
-    correct: 0 },
-  { cat: "Abbreviations — Training", type: "mc",
-    text: "NBC training stands for:",
-    options: ["Nuclear, Biological and Chemical training", "National Battle Combat training", "Night Battle Conditions training", "New Basic Combat training"],
-    correct: 0 },
-
-  // ---------- FILL IN THE BLANK — GRAMMAR (present simple, past simple, there is/there are) ----------
-  { cat: "Grammar — Present simple (3rd person)", type: "fill",
-    text: "Every morning, the recruit {blank} (hear) the Bugle at Reveille.",
-    hint: "present simple, singular subject",
-    answers: ["hears"],
-    explain: "Singular subjects (he/she/it, \"the recruit\") take an -s in the present simple: hear → hears." },
-  { cat: "Grammar — Present simple (plural)", type: "fill",
-    text: "The peacekeepers {blank} (patrol) the Buffer Zone every day.",
-    hint: "present simple, plural subject",
-    answers: ["patrol"],
-    explain: "Plural subjects (\"the peacekeepers\") use the base form, with no -s." },
-  { cat: "Grammar — Present simple (3rd person)", type: "fill",
-    text: "The Sergeant always {blank} (maintain) discipline in the unit.",
-    hint: "present simple, singular subject",
-    answers: ["maintains"],
-    explain: "Singular subject \"the Sergeant\" in the present simple: maintain → maintains." },
-  { cat: "Grammar — Present simple (3rd person)", type: "fill",
-    text: "The Captain always {blank} (brief) the troops before departure.",
-    hint: "present simple, singular subject",
-    answers: ["briefs"],
-    explain: "Singular subject \"the Captain\": brief → briefs." },
-  { cat: "Grammar — Present simple (plural)", type: "fill",
-    text: "NCOs {blank} (train) new recruits every month.",
-    hint: "present simple, plural subject",
-    answers: ["train"],
-    explain: "Plural subject \"NCOs\" uses the base form, with no -s." },
-  { cat: "Grammar — Present simple (3rd person)", type: "fill",
-    text: "The Colonel {blank} (command) the entire battalion.",
-    hint: "present simple, singular subject",
-    answers: ["commands"],
-    explain: "Singular subject \"the Colonel\": command → commands." },
-  { cat: "Grammar — Past simple", type: "fill",
-    text: "Last week, the Captain {blank} (promote) two corporals to sergeant.",
-    hint: "past simple",
-    answers: ["promoted"],
-    explain: "\"Last week\" signals the past simple: promote → promoted." },
-  { cat: "Grammar — Present simple (3rd person)", type: "fill",
-    text: "The platoon leader always {blank} (check) the equipment list before departure.",
-    hint: "present simple, singular subject",
-    answers: ["checks"],
-    explain: "Singular subject \"the platoon leader\": check → checks." },
-  { cat: "Grammar — Past simple", type: "fill",
-    text: "Yesterday, the recruits {blank} (clean) their rifles after the exercise.",
-    hint: "past simple",
-    answers: ["cleaned"],
-    explain: "\"Yesterday\" signals the past simple: clean → cleaned." },
-  { cat: "Grammar — Negative present simple", type: "fill",
-    text: "During ceremonies, soldiers {blank} (not / wear) full combat gear.",
-    hint: "negative, present simple",
-    answers: ["do not wear", "don't wear"],
-    explain: "Negative present simple with a plural subject: do not + base verb → do not wear / don't wear." },
-  { cat: "Grammar — Past simple", type: "fill",
-    text: "The recruits {blank} (arrive) at the barracks an hour ago.",
-    hint: "past simple",
-    answers: ["arrived"],
-    explain: "\"An hour ago\" signals the past simple: arrive → arrived." },
-  { cat: "Grammar — Past simple", type: "fill",
-    text: "The platoon {blank} (secure) the area while the medic treated the casualty.",
-    hint: "past simple",
-    answers: ["secured"],
-    explain: "Simple past action alongside another past action: secure → secured." },
-  { cat: "Grammar — Past simple", type: "fill",
-    text: "The unit {blank} (capture) the enemy position last night.",
-    hint: "past simple",
-    answers: ["captured"],
-    explain: "\"Last night\" signals the past simple: capture → captured." },
-  { cat: "Grammar — Past simple", type: "fill",
-    text: "The medic {blank} (treat) the casualty quickly.",
-    hint: "past simple",
-    answers: ["treated"],
-    explain: "Regular verb in the past simple: treat → treated." },
-  { cat: "Grammar — There is / there are", type: "fill",
-    text: "{blank} a Sergeant in charge of the patrol.",
-    hint: "there is / there are — singular",
-    answers: ["There is", "There's"],
-    explain: "Use \"There is\" with a singular noun: a Sergeant (one person)." },
-  { cat: "Grammar — There is / there are", type: "fill",
-    text: "{blank} three rifles in the armory.",
-    hint: "there is / there are — plural",
-    answers: ["There are"],
-    explain: "Use \"There are\" with a plural noun: three rifles." },
-  { cat: "Grammar — There is / there are", type: "fill",
-    text: "{blank} a Buffer Zone between the two armies.",
-    hint: "there is / there are — singular",
-    answers: ["There is"],
-    explain: "Use \"There is\" with a singular noun: a Buffer Zone." },
-  { cat: "Grammar — There is / there are", type: "fill",
-    text: "{blank} many peacekeepers in the region.",
-    hint: "there is / there are — plural",
-    answers: ["There are"],
-    explain: "Use \"There are\" with a plural noun: many peacekeepers." },
-  { cat: "Grammar — There is / there are", type: "fill",
-    text: "{blank} no ammunition left in the magazine.",
-    hint: "there is / there are — uncountable",
-    answers: ["There is"],
-    explain: "\"Ammunition\" is uncountable, so it takes \"There is\", like a singular noun." },
-  { cat: "Grammar — There is / there are", type: "fill",
-    text: "{blank} a truce between the factions right now.",
-    hint: "there is / there are — singular",
-    answers: ["There is"],
-    explain: "Use \"There is\" with a singular noun: a truce." },
-  { cat: "Grammar — There was / there were", type: "fill",
-    text: "{blank} a ceasefire in that region last year.",
-    hint: "there was / there were — singular, past",
-    answers: ["There was"],
-    explain: "\"There was\" is the past form of \"There is\", used with a singular noun: a ceasefire." },
-  { cat: "Grammar — There was / there were", type: "fill",
-    text: "{blank} several casualties after the attack.",
-    hint: "there was / there were — plural, past",
-    answers: ["There were"],
-    explain: "\"There were\" is the past form of \"There are\", used with a plural noun: several casualties." },
-  { cat: "Grammar — There was / there were", type: "fill",
-    text: "{blank} a helicopter near the base yesterday.",
-    hint: "there was / there were — singular, past",
-    answers: ["There was"],
-    explain: "Singular noun \"a helicopter\" in the past takes \"There was\"." },
-  { cat: "Grammar — There was / there were", type: "fill",
-    text: "{blank} two APCs at the checkpoint this morning.",
-    hint: "there was / there were — plural, past",
-    answers: ["There were"],
-    explain: "Plural noun \"two APCs\" in the past takes \"There were\"." },
-];
-
-let current = 0;
-let score = 0;
-let answered = false;
+// ============ STATE ============
+let studentId = null;
+let studentName = null;
+let studentData = { blocks: {} };
+let activeBlockKey = null;
+let activeQuestions = [];
+let current = 0, score = 0, answered = false, selectedOption = null, currentOptions = [];
 let userAnswers = [];
-let selectedOption = null;
-let currentOptions = [];
-let quizQuestions = QUESTIONS;
 
+// ============ DOM ============
+const screenName = document.getElementById('screenName');
+const screenDashboard = document.getElementById('screenDashboard');
+const screenQuiz = document.getElementById('screenQuiz');
+const screenResults = document.getElementById('screenResults');
+const navUser = document.getElementById('navUser');
+
+function showScreen(el) {
+  [screenName, screenDashboard, screenQuiz, screenResults].forEach(s => s.classList.add('hidden'));
+  el.classList.remove('hidden');
+}
+
+function slugify(name) {
+  return name.trim().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+}
+
+// ============ NAME SCREEN ============
+document.getElementById('nameSubmit').addEventListener('click', submitName);
+document.getElementById('nameInput').addEventListener('keydown', e => { if (e.key === 'Enter') submitName(); });
+
+async function submitName() {
+  const raw = document.getElementById('nameInput').value;
+  if (!raw.trim()) return;
+  studentName = raw.trim().toUpperCase();
+  studentId = slugify(raw);
+  const statusEl = document.getElementById('nameStatus');
+  statusEl.textContent = 'Cargando tu progreso...';
+
+  try {
+    const docRef = db.collection('students').doc(studentId);
+    const docSnap = await docRef.get();
+    if (docSnap.exists) {
+      studentData = docSnap.data();
+      if (!studentData.blocks) studentData.blocks = {};
+    } else {
+      studentData = { name: studentName, blocks: {}, createdAt: new Date().toISOString() };
+      await docRef.set(studentData);
+    }
+    navUser.textContent = studentName;
+    document.getElementById('dashName').textContent = studentName;
+    renderDashboard();
+    showScreen(screenDashboard);
+  } catch (err) {
+    statusEl.textContent = 'No se pudo conectar a la base de datos. Verifica tu conexión e intenta de nuevo.';
+    console.error(err);
+  }
+}
+
+// ============ DASHBOARD ============
+function renderDashboard() {
+  const row = document.getElementById('blocksRow');
+  row.innerHTML = '';
+  Object.keys(QUESTION_BANK).forEach(key => {
+    const block = QUESTION_BANK[key];
+    const progress = studentData.blocks[key];
+    const pct = progress ? progress.pct : 0;
+    const locked = block.locked;
+    const ringColor = pct >= 90 ? '#6b9c4f' : pct >= 50 ? '#c9a24b' : pct > 0 ? '#c96b4b' : '#4f6b3a';
+
+    const col = document.createElement('div');
+    col.className = 'col-6 col-lg-3';
+    col.innerHTML = `
+      <div class="card block-card floating h-100 p-3 text-center ${locked ? 'locked card-muted' : ''}" data-key="${key}">
+        <div class="progress-ring" style="--pct:${pct}; --ring-color:${ringColor};">
+          <div class="progress-ring-inner">
+            ${locked
+              ? '<span style="font-size:22px;">🔒</span>'
+              : `<span class="pct-value">${pct}%</span><span class="pct-label">${progress ? 'completado' : 'sin iniciar'}</span>`}
+          </div>
+        </div>
+        <h6 class="mt-3 mb-0">${block.title}</h6>
+        <p class="text-secondary small mb-0">${block.subtitle}</p>
+        ${!locked ? `<p class="text-secondary small mb-0">${block.questions.length} preguntas</p>` : ''}
+      </div>
+    `;
+    if (!locked) {
+      col.querySelector('.block-card').addEventListener('click', () => startBlock(key));
+    }
+    row.appendChild(col);
+  });
+}
+
+document.getElementById('backToDashboard').addEventListener('click', () => {
+  showScreen(screenDashboard);
+  renderDashboard();
+});
+document.getElementById('resBackBtn').addEventListener('click', () => {
+  showScreen(screenDashboard);
+  renderDashboard();
+});
+
+// ============ QUIZ ENGINE ============
 function shuffle(arr) {
   const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -868,71 +459,45 @@ function shuffle(arr) {
   return a;
 }
 
+function startBlock(key) {
+  activeBlockKey = key;
+  activeQuestions = shuffle(QUESTION_BANK[key].questions);
+  current = 0; score = 0; answered = false; userAnswers = [];
+  showScreen(screenQuiz);
+  renderQuestion();
+}
+
+function normalize(s) { return s.trim().toLowerCase().replace(/[.!?]/g, ''); }
+
 function getShuffledOptions(q) {
   const withFlags = q.options.map((opt, i) => ({ text: opt, isCorrect: i === q.correct }));
   return shuffle(withFlags);
 }
 
-const startScreen = document.getElementById('startScreen');
-const quizScreen = document.getElementById('quizScreen');
-const resultsScreen = document.getElementById('resultsScreen');
-const startBtn = document.getElementById('startBtn');
-const progressLabel = document.getElementById('progressLabel');
-const progressFill = document.getElementById('progressFill');
-const scoreChip = document.getElementById('scoreChip');
-const catTag = document.getElementById('catTag');
-const qtypeTag = document.getElementById('qtypeTag');
-const sentenceWrap = document.getElementById('sentenceWrap');
-const sentenceBox = document.getElementById('sentenceBox');
-const questionText = document.getElementById('questionText');
-const mcOptions = document.getElementById('mcOptions');
-const fillArea = document.getElementById('fillArea');
-const fillInput = document.getElementById('fillInput');
-const feedbackRow = document.getElementById('feedbackRow');
-const feedbackTitle = document.getElementById('feedbackTitle');
-const feedbackNote = document.getElementById('feedbackNote');
-const actionBtn = document.getElementById('actionBtn');
-const stamp = document.getElementById('stamp');
-const restartBtn = document.getElementById('restartBtn');
-
-startBtn.addEventListener('click', () => {
-  quizQuestions = shuffle(QUESTIONS);
-  startScreen.classList.add('hidden');
-  quizScreen.classList.remove('hidden');
-  renderQuestion();
-});
-
-restartBtn.addEventListener('click', () => {
-  current = 0; score = 0; answered = false; userAnswers = []; selectedOption = null;
-  resultsScreen.classList.add('hidden');
-  startScreen.classList.remove('hidden');
-});
-
-function normalize(s) {
-  return s.trim().toLowerCase().replace(/[.!?]/g, '').replace(/['’]/g, '');
-}
-
 function renderQuestion() {
   answered = false;
   selectedOption = null;
-  const q = quizQuestions[current];
-  progressLabel.textContent = 'ITEM ' + String(current + 1).padStart(2, '0') + '/' + quizQuestions.length;
-  progressFill.style.width = (current / quizQuestions.length * 100) + '%';
-  scoreChip.textContent = score + ' PTS';
-  catTag.textContent = q.cat.toUpperCase();
+  const q = activeQuestions[current];
 
-  const typeLabels = { mc: '· MULTIPLE CHOICE', correction: '· SPOT THE ERROR', fill: '· FILL IN THE BLANK' };
-  qtypeTag.textContent = typeLabels[q.type];
+  document.getElementById('quizProgressLabel').textContent = `ITEM ${current + 1}/${activeQuestions.length}`;
+  document.getElementById('quizProgressBar').style.width = (current / activeQuestions.length * 100) + '%';
+  document.getElementById('catTag').textContent = q.cat;
+  const typeLabels = { mc: 'Multiple choice', correction: 'Spot the error', fill: 'Fill in the blank' };
+  document.getElementById('typeTag').textContent = typeLabels[q.type];
 
-  stamp.classList.remove('show', 'correct', 'incorrect');
-  feedbackRow.classList.remove('show');
-  actionBtn.textContent = 'Comprobar respuesta';
-  actionBtn.disabled = false;
+  document.getElementById('feedbackBox').classList.add('hidden');
+  document.getElementById('feedbackBox').className = 'alert mt-3 hidden';
+  document.getElementById('actionBtn').textContent = 'Comprobar respuesta';
+
+  const sentenceWrap = document.getElementById('sentenceWrap');
+  const questionText = document.getElementById('questionText');
+  const mcOptions = document.getElementById('mcOptions');
+  const fillArea = document.getElementById('fillArea');
+  const fillInput = document.getElementById('fillInput');
 
   if (q.type === 'correction') {
     sentenceWrap.classList.remove('hidden');
-    const highlighted = q.sentence.replace(q.flagged, '<span class="flag">' + q.flagged + '</span>');
-    sentenceBox.innerHTML = highlighted;
+    document.getElementById('sentenceBox').innerHTML = q.sentence.replace(q.flagged, '<span class="flagged-word">' + q.flagged + '</span>');
     questionText.textContent = 'Which spelling is correct?';
     mcOptions.classList.remove('hidden');
     fillArea.classList.add('hidden');
@@ -950,58 +515,57 @@ function renderQuestion() {
     mcOptions.classList.add('hidden');
     fillArea.classList.remove('hidden');
     const parts = q.text.split('{blank}');
-    questionText.innerHTML = parts[0] + '<span class="blank">______</span>' + parts[1] + ' <span class="hint">(' + q.hint + ')</span>';
+    questionText.innerHTML = parts[0] + ' <u>______</u> ' + parts[1] + ' <span class="text-secondary small">(' + q.hint + ')</span>';
     fillInput.value = '';
-    fillInput.className = 'fill-input';
+    fillInput.className = 'form-control form-control-lg';
     fillInput.disabled = false;
     setTimeout(() => fillInput.focus(), 50);
   }
 }
 
 function buildOptions(options) {
+  const mcOptions = document.getElementById('mcOptions');
   mcOptions.innerHTML = '';
   const letters = ['A', 'B', 'C', 'D'];
   options.forEach((opt, i) => {
-    const div = document.createElement('div');
-    div.className = 'option';
-    div.innerHTML = '<span class="option-letter">' + letters[i] + '</span><span>' + opt.text + '</span>';
-    div.addEventListener('click', () => {
+    const item = document.createElement('div');
+    item.className = 'list-group-item';
+    item.innerHTML = `<strong class="me-2">${letters[i]}.</strong> ${opt.text}`;
+    item.addEventListener('click', () => {
       if (answered) return;
-      document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-      div.classList.add('selected');
+      document.querySelectorAll('#mcOptions .list-group-item').forEach(o => o.classList.remove('selected'));
+      item.classList.add('selected');
       selectedOption = i;
     });
-    mcOptions.appendChild(div);
+    mcOptions.appendChild(item);
   });
 }
 
-actionBtn.addEventListener('click', () => {
+document.getElementById('actionBtn').addEventListener('click', () => {
   if (!answered) checkAnswer();
   else goNext();
 });
-
-fillInput.addEventListener('keydown', (e) => {
+document.getElementById('fillInput').addEventListener('keydown', e => {
   if (e.key === 'Enter' && !answered) checkAnswer();
 });
 
 function checkAnswer() {
-  const q = quizQuestions[current];
-  let isCorrect = false;
-  let userAnswerText = '';
+  const q = activeQuestions[current];
+  let isCorrect = false, userAnswerText = '';
 
   if (q.type === 'fill') {
-    const val = fillInput.value;
+    const val = document.getElementById('fillInput').value;
     if (!val.trim()) return;
     userAnswerText = val;
     isCorrect = q.answers.some(a => normalize(a) === normalize(val));
-    fillInput.classList.add(isCorrect ? 'correct' : 'incorrect');
-    fillInput.disabled = true;
+    document.getElementById('fillInput').classList.add(isCorrect ? 'is-valid' : 'is-invalid');
+    document.getElementById('fillInput').disabled = true;
   } else {
     if (selectedOption === null) return;
     isCorrect = currentOptions[selectedOption].isCorrect;
     userAnswerText = currentOptions[selectedOption].text;
     const correctIndex = currentOptions.findIndex(o => o.isCorrect);
-    document.querySelectorAll('.option').forEach((o, i) => {
+    document.querySelectorAll('#mcOptions .list-group-item').forEach((o, i) => {
       if (i === correctIndex) o.classList.add('correct');
       else if (i === selectedOption && !isCorrect) o.classList.add('incorrect');
     });
@@ -1011,90 +575,71 @@ function checkAnswer() {
   if (isCorrect) score++;
   userAnswers.push({ q, isCorrect, userAnswerText });
 
-  stamp.textContent = isCorrect ? 'CORRECT' : 'INCORRECT';
-  stamp.classList.add('show', isCorrect ? 'correct' : 'incorrect');
+  const box = document.getElementById('feedbackBox');
+  box.classList.remove('hidden');
+  box.className = 'alert mt-3 ' + (isCorrect ? 'alert-success' : 'alert-danger');
+  document.getElementById('feedbackTitle').textContent = isCorrect ? '✔ Correct' : '✘ Incorrect';
 
-  feedbackRow.classList.add('show');
-  feedbackTitle.textContent = isCorrect ? 'Correct' : 'Incorrect';
-  feedbackTitle.className = 'feedback-title ' + (isCorrect ? 'correct' : 'incorrect');
+  let note = '';
+  if (q.type === 'fill') note = (isCorrect ? '' : 'Correct answer: "' + q.answers[0] + '". ') + q.explain;
+  else if (q.type === 'correction') note = (isCorrect ? '' : 'Correct spelling: "' + q.options[q.correct] + '". ') + q.explain;
+  else note = isCorrect ? 'That is correct.' : 'Correct answer: "' + q.options[q.correct] + '".';
+  document.getElementById('feedbackNote').textContent = note;
 
-  if (q.type === 'fill') {
-    feedbackNote.textContent = (isCorrect ? '' : 'Correct answer: "' + q.answers[0] + '". ') + q.explain;
-  } else if (q.type === 'correction') {
-    feedbackNote.textContent = (isCorrect ? '' : 'Correct spelling: "' + q.options[q.correct] + '". ') + q.explain;
-  } else {
-    feedbackNote.textContent = isCorrect ? 'That is correct.' : 'Correct answer: "' + q.options[q.correct] + '".';
-  }
-
-  scoreChip.textContent = score + ' PTS';
-  actionBtn.textContent = current === quizQuestions.length - 1 ? 'Ver resultado final' : 'Siguiente pregunta';
+  document.getElementById('actionBtn').textContent = current === activeQuestions.length - 1 ? 'Ver resultado' : 'Siguiente pregunta';
 }
 
 function goNext() {
   current++;
-  if (current >= quizQuestions.length) showResults();
+  if (current >= activeQuestions.length) finishBlock();
   else renderQuestion();
 }
 
-function showResults() {
-  quizScreen.classList.add('hidden');
-  resultsScreen.classList.remove('hidden');
+async function finishBlock() {
+  const pct = Math.round((score / activeQuestions.length) * 100);
+  studentData.blocks[activeBlockKey] = {
+    score, total: activeQuestions.length, pct,
+    completedAt: new Date().toISOString()
+  };
 
-  const pct = Math.round((score / quizQuestions.length) * 100);
-  document.getElementById('resultScore').textContent = score;
-  document.getElementById('resultOf').textContent = 'DE ' + quizQuestions.length + ' PUNTOS (' + pct + '%)';
+  try {
+    await db.collection('students').doc(studentId).set(studentData, { merge: true });
+  } catch (err) {
+    console.error('Error guardando progreso:', err);
+  }
 
-  const tierEl = document.getElementById('resultTier');
-  let tierText, tierColor;
-  if (pct >= 90) { tierText = 'Excelente — listo para el parcial'; tierColor = 'var(--stamp-green)'; }
-  else if (pct >= 70) { tierText = 'Bueno — repasa los puntos débiles'; tierColor = 'var(--olive)'; }
-  else if (pct >= 50) { tierText = 'Regular — necesitas más repaso'; tierColor = 'var(--amber)'; }
-  else { tierText = 'Necesitas repasar el material a fondo'; tierColor = 'var(--stamp-red)'; }
-  tierEl.textContent = tierText;
-  tierEl.style.borderColor = tierColor;
-  tierEl.style.color = tierColor;
+  showResults(pct);
+}
 
-  const catStats = {};
-  userAnswers.forEach(a => {
-    if (!catStats[a.q.cat]) catStats[a.q.cat] = { correct: 0, total: 0 };
-    catStats[a.q.cat].total++;
-    if (a.isCorrect) catStats[a.q.cat].correct++;
-  });
-  const breakdown = document.getElementById('breakdown');
-  breakdown.innerHTML = '';
-  Object.keys(catStats).forEach(cat => {
-    const s = catStats[cat];
-    const row = document.createElement('div');
-    row.className = 'breakdown-row';
-    row.innerHTML = '<span class="breakdown-cat">' + cat + '</span><span class="breakdown-stat">' + s.correct + '/' + s.total + '</span>';
-    breakdown.appendChild(row);
-  });
+function showResults(pct) {
+  showScreen(screenResults);
+  document.getElementById('resScore').textContent = pct + '%';
+  document.getElementById('resDetail').textContent = `${score} de ${activeQuestions.length} respuestas correctas — ${QUESTION_BANK[activeBlockKey].title}`;
+
+  const tierEl = document.getElementById('resTier');
+  if (pct >= 90) { tierEl.className = 'alert alert-success'; tierEl.textContent = 'Excelente — dominio sólido de este bloque.'; }
+  else if (pct >= 70) { tierEl.className = 'alert alert-info'; tierEl.textContent = 'Bueno — repasa los puntos débiles.'; }
+  else if (pct >= 50) { tierEl.className = 'alert alert-warning'; tierEl.textContent = 'Regular — necesitas más repaso.'; }
+  else { tierEl.className = 'alert alert-danger'; tierEl.textContent = 'Necesitas repasar este bloque a fondo.'; }
 
   const missed = userAnswers.filter(a => !a.isCorrect);
-  const missedWrap = document.getElementById('missedWrap');
-  const missedList = document.getElementById('missedList');
-  missedList.innerHTML = '';
+  const missedWrap = document.getElementById('resMissed');
+  missedWrap.innerHTML = '';
   if (missed.length) {
-    missedWrap.classList.remove('hidden');
+    const title = document.createElement('p');
+    title.className = 'text-secondary text-uppercase small mt-4 mb-2';
+    title.textContent = 'Repaso de fallos';
+    missedWrap.appendChild(title);
     missed.forEach(a => {
-      const div = document.createElement('div');
-      div.className = 'missed-item';
       let qText, correctText;
-      if (a.q.type === 'fill') {
-        qText = a.q.text.replace('{blank}', '____');
-        correctText = a.q.answers[0];
-      } else if (a.q.type === 'correction') {
-        qText = a.q.sentence;
-        correctText = a.q.options[a.q.correct];
-      } else {
-        qText = a.q.text;
-        correctText = a.q.options[a.q.correct];
-      }
-      div.innerHTML = '<p class="missed-q">' + qText + '</p><p class="missed-a">Your answer: "' + a.userAnswerText + '" &middot; Correct: <b>' + correctText + '</b></p>';
-      missedList.appendChild(div);
+      if (a.q.type === 'fill') { qText = a.q.text.replace('{blank}', '____'); correctText = a.q.answers[0]; }
+      else if (a.q.type === 'correction') { qText = a.q.sentence; correctText = a.q.options[a.q.correct]; }
+      else { qText = a.q.text; correctText = a.q.options[a.q.correct]; }
+      const div = document.createElement('div');
+      div.className = 'border-bottom border-secondary-subtle py-2 small';
+      div.innerHTML = `<p class="mb-1 text-secondary">${qText}</p><p class="mb-0">Tu respuesta: "${a.userAnswerText}" &middot; Correcta: <strong class="text-accent">${correctText}</strong></p>`;
+      missedWrap.appendChild(div);
     });
-  } else {
-    missedWrap.classList.add('hidden');
   }
 }
 </script>
