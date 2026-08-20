@@ -22,6 +22,19 @@
   .btn-outline-accent:hover { background: #9db47a; color: #1c1e1a; }
   .form-control, .form-control:focus { background: #1c1e1a; color: #eae6d8; border-color: #3d4030; }
   .form-control:focus { box-shadow: 0 0 0 .2rem rgba(157,180,122,.25); }
+  .form-control:disabled,
+  .form-control.is-valid,
+  .form-control.is-invalid { background-color: #1c1e1a !important; color: #eae6d8 !important; opacity: 1; }
+  .form-control.is-valid { border-color: #6b9c4f !important; }
+  .form-control.is-invalid { border-color: #a85c4a !important; }
+
+  .badge.bg-secondary { background-color: #3d4030 !important; color: #eae6d8 !important; }
+  .badge.bg-dark { background-color: #1c1e1a !important; color: #9db47a !important; border-color: #4f6b3a !important; }
+
+  .alert-success { background: #1f2e1a; border-color: #6b9c4f; color: #bfe3ab; }
+  .alert-danger { background: #2e1a1a; border-color: #a85c4a; color: #e8c3ba; }
+  .alert-warning { background: #2e2a1a; border-color: #c9a24b; color: #e8d9b3; }
+  .alert-info { background: #1a2530; border-color: #5c8ab4; color: #b3d4e8; }
   .list-group-item { background: #1c1e1a; color: #eae6d8; border-color: #3d4030; cursor: pointer; }
   .list-group-item:hover { background: #2a2d24; }
   .list-group-item.selected { background: #3a4a2a; border-color: #9db47a; }
@@ -92,11 +105,13 @@
     font-size: 14px;
     min-height: 54px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: border-color 0.15s ease, background 0.15s ease;
   }
+  .org-slot .org-sublabel { font-size: 11px; color: #9c9885; margin-top: 2px; }
   .org-slot:hover { border-color: #9db47a; }
   .org-slot.filled { border-style: solid; background: #2a2d24; color: #eae6d8; }
   .org-slot.correct { border-color: #6b9c4f; background: #2f4a2a; }
@@ -467,36 +482,60 @@ const QUESTION_BANK = {
 };
 
 // ============ ORG CHART DATA ============
+// Every position is now a blank slot — nothing is pre-filled, no hints.
 const ORG_CHARTS = {
   chainOfCommand: {
     title: "Cadena de mando — Misión de paz de la ONU",
-    wordBank: ["Sector Commander", "Force Commander", "Secretary General of the United Nations"],
+    wordBank: [
+      "United Nations Security Council",
+      "Secretary General of the United Nations",
+      "Head of Mission",
+      "Force Commander",
+      "Sector Commander",
+      "Contingent Commander"
+    ],
     levels: [
-      { type: "fixed", label: "United Nations Security Council" },
-      { type: "blank", id: "b1", answer: "Secretary General of the United Nations" },
-      { type: "fixed", label: "Head of Mission" },
-      { type: "blank", id: "b2", answer: "Force Commander" },
-      { type: "blank", id: "b3", answer: "Sector Commander" },
-      { type: "fixed", label: "Contingent Commander" }
+      { id: "b1", answer: "United Nations Security Council" },
+      { id: "b2", answer: "Secretary General of the United Nations" },
+      { id: "b3", answer: "Head of Mission" },
+      { id: "b4", answer: "Force Commander" },
+      { id: "b5", answer: "Sector Commander" },
+      { id: "b6", answer: "Contingent Commander" }
     ]
   },
   hqStructure: {
     title: "Estructura del cuartel general (HQ Sector West)",
-    wordBank: ["Command Group", "Chief of Staff", "Operations", "Communications"],
-    top: { type: "fixed", label: "Commander", sublabel: "Sector West" },
-    middleRow: [
-      { type: "blank", id: "b1", answer: "Command Group", sublabel: "RSM, Military Assistant, Driver" },
-      { type: "blank", id: "b2", answer: "Chief of Staff", sublabel: "HQ Sector West" },
-      { type: "fixed", label: "Defence Platoon" }
+    wordBank: [
+      "Commander",
+      "Command Group",
+      "Chief of Staff",
+      "Defence Platoon",
+      "Movement Control Detachment",
+      "Liaison Officers",
+      "S1 and 4 Cell",
+      "S2 Cell",
+      "Operations",
+      "S5 Cell",
+      "Communications",
+      "S9 Cell"
     ],
-    extraFixed: ["Movement Control Detachment", "Liaison Officers"],
+    top: { id: "b1", answer: "Commander", sublabel: "Sector West" },
+    middleRow: [
+      { id: "b2", answer: "Command Group", sublabel: "RSM, Military Assistant, Driver" },
+      { id: "b3", answer: "Chief of Staff", sublabel: "HQ Sector West" },
+      { id: "b4", answer: "Defence Platoon" }
+    ],
+    extraFixed: [
+      { id: "b5", answer: "Movement Control Detachment" },
+      { id: "b6", answer: "Liaison Officers" }
+    ],
     cellsRow: [
-      { type: "fixed", label: "S1 and 4 Cell", sublabel: "Personnel and Logistics" },
-      { type: "fixed", label: "S2 Cell", sublabel: "Information" },
-      { type: "blank", id: "b3", answer: "Operations", sublabel: "S3 Cell" },
-      { type: "fixed", label: "S5 Cell", sublabel: "Plans" },
-      { type: "blank", id: "b4", answer: "Communications", sublabel: "S6 Cell" },
-      { type: "fixed", label: "S9 Cell", sublabel: "Civil Liaison & Humanitarian Assistance" }
+      { id: "b7", answer: "S1 and 4 Cell", sublabel: "Personnel and Logistics" },
+      { id: "b8", answer: "S2 Cell", sublabel: "Information" },
+      { id: "b9", answer: "Operations", sublabel: "S3 Cell" },
+      { id: "b10", answer: "S5 Cell", sublabel: "Plans" },
+      { id: "b11", answer: "Communications", sublabel: "S6 Cell" },
+      { id: "b12", answer: "S9 Cell", sublabel: "Civil Liaison & Humanitarian Assistance" }
     ]
   }
 };
@@ -611,8 +650,8 @@ function renderOrgCards() {
     const progress = studentData.orgcharts[key];
     const pct = progress ? progress.pct : 0;
     const totalBlanks = chart.levels
-      ? chart.levels.filter(l => l.type === 'blank').length
-      : chart.middleRow.filter(l => l.type === 'blank').length + chart.cellsRow.filter(l => l.type === 'blank').length;
+      ? chart.levels.length
+      : 1 + chart.middleRow.length + chart.extraFixed.length + chart.cellsRow.length;
 
     const col = document.createElement('div');
     col.className = 'col-12 col-md-6';
@@ -846,8 +885,8 @@ function openOrgChart(key) {
   const chart = ORG_CHARTS[key];
   orgPlacements = {};
   const blankIds = chart.levels
-    ? chart.levels.filter(l => l.type === 'blank').map(l => l.id)
-    : [...chart.middleRow, ...chart.cellsRow].filter(l => l.type === 'blank').map(l => l.id);
+    ? chart.levels.map(l => l.id)
+    : [chart.top, ...chart.middleRow, ...chart.extraFixed, ...chart.cellsRow].map(l => l.id);
   blankIds.forEach(id => orgPlacements[id] = null);
   orgWordBank = shuffle(chart.wordBank);
   orgSelectedWord = null;
@@ -866,15 +905,15 @@ function openOrgChart(key) {
 function getBlankDef(id) {
   const chart = ORG_CHARTS[orgActiveChart];
   if (chart.levels) return chart.levels.find(l => l.id === id);
-  return [...chart.middleRow, ...chart.cellsRow].find(l => l.id === id);
+  return [chart.top, ...chart.middleRow, ...chart.extraFixed, ...chart.cellsRow].find(l => l.id === id);
 }
 
 function orgBoxHTML(node) {
-  if (node.type === 'fixed') {
-    return `<div class="org-box fixed">${node.label}${node.sublabel ? '<span class="org-sublabel">' + node.sublabel + '</span>' : ''}</div>`;
-  }
   const filled = orgPlacements[node.id];
-  return `<div class="org-slot" data-blank="${node.id}">${filled ? filled : (node.sublabel || 'Coloca aquí')}</div>`;
+  return `<div class="org-slot" data-blank="${node.id}">
+    <span>${filled ? filled : 'Coloca aquí'}</span>
+    ${node.sublabel ? '<span class="org-sublabel">' + node.sublabel + '</span>' : ''}
+  </div>`;
 }
 
 function renderChainChart() {
@@ -899,7 +938,7 @@ function renderHQChart() {
   chart.middleRow.forEach(node => { html += '<div class="col-4">' + orgBoxHTML(node) + '</div>'; });
   html += '</div>';
   html += '<div class="row g-2 mb-3">';
-  chart.extraFixed.forEach(label => { html += `<div class="col-6"><div class="org-box fixed">${label}</div></div>`; });
+  chart.extraFixed.forEach(node => { html += '<div class="col-6">' + orgBoxHTML(node) + '</div>'; });
   html += '</div>';
   html += '<div class="org-connector"></div>';
   html += '<div class="row g-2">';
@@ -981,8 +1020,8 @@ document.getElementById('orgResetBtn').addEventListener('click', () => openOrgCh
 document.getElementById('orgCheckBtn').addEventListener('click', async () => {
   const chart = ORG_CHARTS[orgActiveChart];
   const blankDefs = chart.levels
-    ? chart.levels.filter(l => l.type === 'blank')
-    : [...chart.middleRow, ...chart.cellsRow].filter(l => l.type === 'blank');
+    ? chart.levels
+    : [chart.top, ...chart.middleRow, ...chart.extraFixed, ...chart.cellsRow];
 
   let correctCount = 0;
   blankDefs.forEach(def => {
