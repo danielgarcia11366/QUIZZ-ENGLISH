@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inglés Técnico Pre-Despliegue - Pase de Salida </title>
+<title>Inglés Técnico Pre-Despliegue</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
   :root {
@@ -200,7 +200,7 @@
 
 <nav class="navbar navbar-dark" style="background:#141510; border-bottom:1px solid #3d4030;">
   <div class="container">
-    <span class="navbar-brand mb-0 h1">🎖 Inglés Técnico Pre-Despliegue - Pase de Salida </span>
+    <span class="navbar-brand mb-0 h1">🎖 Inglés Pase de Salida</span>
     <span id="navUser" class="text-accent small"></span>
   </div>
 </nav>
@@ -211,8 +211,8 @@
   <div id="screenName" class="row justify-content-center">
     <div class="col-12 col-md-6 col-lg-5">
       <div class="card p-4 shadow">
-        <h4 class="mb-1">Bienvenido, Señor Oso</h4>
-        <p class="text-secondary small mb-4">Escriba su nombre para cargar o crear su progreso.</p>
+        <h4 class="mb-1">Bienvenido, Señor Oso 🐻</h4>
+        <p class="text-secondary small mb-4">Escribe tu nombre para cargar o crear tu progreso.</p>
         <div class="mb-3">
           <input type="text" id="nameInput" class="form-control form-control-lg" placeholder="Ej. DANIEL" autocomplete="off">
         </div>
@@ -364,7 +364,7 @@ const NEW_GRAMMAR = [
 ];
 
 const NEW_VOCAB = [
-  { cat: "Military Vocabulary", type: "mc", text: "A {blank} is a military structure used for protection and observation.", options: ["checkpoint", "bunker", "kitchen"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "A {blank} is a military structure used for protection and observation.", options: ["checkpoint", "bunker", "kitchen"], correct: 0 },
   { cat: "Military Vocabulary", type: "mc", text: "The soldiers are carrying {blank} with food, water, and emergency kits.", options: ["backpacks", "fuel tanks", "engines"], correct: 0 },
   { cat: "Military Vocabulary", type: "mc", text: "Before leaving the base, the mechanic must inspect the vehicle's {blank}.", options: ["uniform", "tires", "helmet"], correct: 1 },
   { cat: "Military Vocabulary", type: "mc", text: "An armed group established an illegal {blank} on the main highway.", options: ["runway", "hospital", "road block"], correct: 2 },
@@ -391,12 +391,33 @@ const NEW_VOCAB = [
   { cat: "Military Vocabulary", type: "mc", text: "Soldiers must perform daily maintenance on their weapons to keep them {blank}.", options: ["operational", "decorative", "locked"], correct: 0 }
 ];
 
+const NEW_GEAR = [
+  { cat: "Military Vocabulary", type: "mc", text: "The bag a soldier carries with personal equipment and supplies is called a {blank}.", options: ["rucksack", "canteen", "poncho"], correct: 0 },
+  { cat: "Military Vocabulary", type: "mc", text: "The soft, round military cap without a visor is called a {blank}.", options: ["helmet", "beret", "cap badge"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "The device worn on the head with a microphone, used to communicate over the radio, is called a {blank}.", options: ["radio headset", "megaphone", "satellite phone"], correct: 0 },
+  { cat: "Military Vocabulary", type: "mc", text: "The belt and strap system a soldier wears to carry gear is called {blank}.", options: ["camouflage", "webbing", "a harness clip"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "The tool used to dig trenches or foxholes is called a {blank}.", options: ["digging tool", "wrench", "compass"], correct: 0 },
+  { cat: "Military Vocabulary", type: "mc", text: "The container a soldier uses to carry drinking water is called a {blank}.", options: ["mess kit", "water bottle", "fuel can"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "The prepared meals soldiers eat in the field are called {blank}.", options: ["combat rations", "care packages", "provisions"], correct: 0 },
+  { cat: "Military Vocabulary", type: "mc", text: "The items worn to protect the hands are called {blank}.", options: ["sleeves", "gloves", "wraps"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "The padded bag soldiers sleep in during field operations is called a {blank}.", options: ["blanket roll", "poncho liner", "sleeping bag"], correct: 2 },
+  { cat: "Military Vocabulary", type: "mc", text: "The cloth used to dry off after washing is called a {blank}.", options: ["towel", "poncho", "liner"], correct: 0 },
+  { cat: "Military Vocabulary", type: "mc", text: "The protective headgear worn by soldiers is called a {blank}.", options: ["beret", "helmet", "cap"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "The device that releases colored smoke to signal or hide movement is called a {blank}.", options: ["flare", "flashbang", "smoke grenade"], correct: 2 },
+  { cat: "Military Vocabulary", type: "mc", text: "The removable container that holds ammunition for a rifle is called a {blank}.", options: ["holster", "magazine", "sling"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "The small bags attached to a belt or vest to carry ammunition and gear are called {blank}.", options: ["rucksacks", "pouches", "ponchos"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "The strap worn around the waist to carry equipment is called a {blank}.", options: ["sling", "webbing strip", "belt"], correct: 2 },
+  { cat: "Military Vocabulary", type: "mc", text: "The netting used to hide vehicles or equipment from view is called a {blank}.", options: ["tarp", "camouflage net", "poncho"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "The strap used to carry a rifle over the shoulder is called a {blank}.", options: ["webbing", "harness", "sling"], correct: 2 },
+  { cat: "Military Vocabulary", type: "mc", text: "The blade attached to the end of a rifle for close combat is called a {blank}.", options: ["cleaning rod", "bayonet", "magazine"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "Bullets or ammunition fired from a weapon are called {blank}.", options: ["casings", "rounds", "clips"], correct: 1 }
+];
+
 const NEW_UN = [
   { cat: "UN Terminology", type: "mc", text: "What does the acronym UNAMIR stand for?", options: ["United Nations Armed Mission in Rwanda", "United Nations Assistance Mission for Rwanda", "United Nations Army Management in Rwanda"], correct: 1 },
   { cat: "UN Terminology", type: "mc", text: "The term ROE in UN peacekeeping stands for:", options: ["Rules of Engagement", "Range of Escorts", "Report of Events"], correct: 0 },
   { cat: "UN Terminology", type: "mc", text: "A temporary stop in fighting agreed upon by both sides is a {blank}.", options: ["treaty", "ceasefire", "deployment"], correct: 1 },
   { cat: "UN Terminology", type: "mc", text: "The official area assigned to a specific UN unit is called its Area of {blank}.", options: ["Control", "Responsibility (AOR)", "Action"], correct: 1 },
-  { cat: "UN Terminology", type: "mc", text: "UN peacekeepers who monitor peace agreements without using force operate under Chapter {blank} of the UN Charter.", options: ["VI (Six)", "VII (Seven)", "IX (Nine)"], correct: 0 },
   { cat: "UN Terminology", type: "mc", text: "The main objective of a UN peacekeeping mission is to protect {blank}.", options: ["military equipment", "civilians under threat", "government buildings only"], correct: 1 },
   { cat: "UN Terminology", type: "mc", text: "A person forced to leave their country due to war or persecution is a {blank}.", options: ["refugee", "tourist", "migrant worker"], correct: 0 },
   { cat: "UN Terminology", type: "mc", text: "An IDP is an Internally {blank} Person.", options: ["Destroyed", "Displaced", "Deployed"], correct: 1 },
@@ -415,8 +436,30 @@ const NEW_UN = [
   { cat: "UN Terminology", type: "mc", text: "Removing landmines from a land area to make it safe is called {blank}.", options: ["demining / mine clearance", "excavation", "demolition"], correct: 0 },
   { cat: "UN Terminology", type: "mc", text: "Bringing international aid like food and medicine to people in need is {blank} aid.", options: ["financial", "tactical", "humanitarian"], correct: 2 },
   { cat: "UN Terminology", type: "mc", text: "When soldiers complete their mission time and return home, it is called {blank}.", options: ["repatriation / redeployment", "enlistment", "recruitment"], correct: 0 },
-  { cat: "UN Terminology", type: "mc", text: "Forceful action authorized by the UN Security Council to restore peace is under Chapter {blank}.", options: ["V", "VI", "VII"], correct: 2 },
   { cat: "UN Terminology", type: "mc", text: "Sexual Exploitation and Abuse (SEA) by UN personnel is strictly {blank}.", options: ["permitted", "prohibited", "optional"], correct: 1 }
+];
+
+const NEW_ABBR = [
+  { cat: "Abbreviations", type: "mc", text: "STANAG stands for:", options: ["Standardization Agreement", "Strategic Tactical Naval Agreement", "Standard Tactical Navigation Guide"], correct: 0 },
+  { cat: "Abbreviations", type: "mc", text: "NATO stands for:", options: ["National Alliance for Tactical Operations", "North Atlantic Treaty Organization", "North American Treaty Organization"], correct: 1 },
+  { cat: "Abbreviations", type: "mc", text: "UN stands for:", options: ["United Nations", "United Nationalities", "Union of Nations"], correct: 0 },
+  { cat: "Abbreviations", type: "mc", text: "GPT stands for:", options: ["General Purpose Technology", "Ground Patrol Transmitter", "Generative Pre-trained Transformer"], correct: 2 },
+  { cat: "Abbreviations", type: "mc", text: "2IC stands for:", options: ["Second Infantry Company", "Second in Command", "Two-way Intelligence Center"], correct: 1 },
+  { cat: "Abbreviations", type: "mc", text: "AI stands for:", options: ["Automated Information", "Air Intelligence", "Artificial Intelligence"], correct: 2 },
+  { cat: "Abbreviations", type: "mc", text: "CNN stands for:", options: ["Central News Network", "Cable News Network", "Combat News Notification"], correct: 1 },
+  { cat: "Abbreviations", type: "mc", text: "CEO stands for:", options: ["Chief Engineering Officer", "Command Execution Order", "Chief Executive Officer"], correct: 2 },
+  { cat: "Abbreviations", type: "mc", text: "QR code stands for:", options: ["Quick Response code", "Quick Radio code", "Quality Report code"], correct: 0 },
+  { cat: "Abbreviations", type: "mc", text: "ER stands for:", options: ["Equipment Room", "Emergency Response", "Emergency Room"], correct: 2 },
+  { cat: "Abbreviations", type: "mc", text: "BCT stands for:", options: ["Base Command Training", "Basic Combat Training", "Battalion Combat Team"], correct: 1 },
+  { cat: "Abbreviations", type: "mc", text: "CO stands for:", options: ["Communications Officer", "Company Order", "Commanding Officer"], correct: 2 },
+  { cat: "Abbreviations", type: "mc", text: "HQ stands for:", options: ["Home Quarters", "Headquarters", "High Quality"], correct: 1 },
+  { cat: "Abbreviations", type: "mc", text: "PX stands for:", options: ["Personnel Exchange", "Patrol Extension", "Post Exchange"], correct: 2 },
+  { cat: "Abbreviations", type: "mc", text: "BX stands for:", options: ["Battalion Exchange", "Base Exchange", "Base Extraction"], correct: 1 },
+  { cat: "Abbreviations", type: "mc", text: "GP (as in \"GP jeep\") stands for:", options: ["Ground Patrol", "General Position", "General Purpose"], correct: 2 },
+  { cat: "Abbreviations", type: "mc", text: "FTX stands for:", options: ["Field Tactical Exchange", "Field Training Exercise", "Forward Training Extension"], correct: 1 },
+  { cat: "Abbreviations", type: "mc", text: "NBC (as a threat category) stands for:", options: ["National Base Command", "Naval Biological Center", "Nuclear, Biological and Chemical"], correct: 2 },
+  { cat: "Abbreviations", type: "mc", text: "LSW stands for:", options: ["Long Service Weapon", "Local Security Watch", "Light Support Weapon"], correct: 2 },
+  { cat: "Abbreviations", type: "mc", text: "CPL stands for:", options: ["Captain", "Corporal", "Colonel"], correct: 1 }
 ];
 
 const NEW_RADIO = [
@@ -527,13 +570,13 @@ const QUESTION_BANK = {
     title: "Bloque 2",
     subtitle: "Vocabulario y ortografía militar",
     locked: false,
-    questions: [...NEW_VOCAB, ...OLD_CORRECTION_KEEP]
+    questions: [...NEW_VOCAB, ...NEW_GEAR, ...OLD_CORRECTION_KEEP]
   },
   block3: {
     title: "Bloque 3",
     subtitle: "Terminología de la ONU",
     locked: false,
-    questions: [...NEW_UN, ...OLD_MC_KEEP]
+    questions: [...NEW_UN, ...NEW_ABBR, ...OLD_MC_KEEP]
   },
   block4: {
     title: "Bloque 4",
