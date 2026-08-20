@@ -67,6 +67,55 @@
   }
 
   .flagged-word { color: #d98a6a; font-weight: 700; }
+
+  .org-box {
+    border: 2px solid #3d4030;
+    background: #1c1e1a;
+    border-radius: 6px;
+    padding: 10px 12px;
+    text-align: center;
+    font-size: 14px;
+    min-height: 54px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .org-box.fixed { background: #2a2d24; border-color: #4f6b3a; }
+  .org-box .org-sublabel { font-size: 11px; color: #9c9885; margin-top: 2px; }
+  .org-slot {
+    border: 2px dashed #6b6650;
+    background: transparent;
+    border-radius: 6px;
+    padding: 10px 12px;
+    text-align: center;
+    font-size: 14px;
+    min-height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .org-slot:hover { border-color: #9db47a; }
+  .org-slot.filled { border-style: solid; background: #2a2d24; color: #eae6d8; }
+  .org-slot.correct { border-color: #6b9c4f; background: #2f4a2a; }
+  .org-slot.incorrect { border-color: #a85c4a; background: #4a2f2a; }
+  .org-connector { width: 2px; background: #3d4030; height: 20px; margin: 0 auto; }
+  .org-chip {
+    background: #2a2d24;
+    border: 1px solid #9db47a;
+    color: #eae6d8;
+    border-radius: 20px;
+    padding: 7px 16px;
+    font-size: 14px;
+    cursor: grab;
+    user-select: none;
+  }
+  .org-chip.selected { background: #4f6b3a; border-color: #eae6d8; }
+  .org-chip:active { cursor: grabbing; }
+  .org-card { cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease; }
+  .org-card:hover { transform: translateY(-4px); border-color: #9db47a; }
   .badge-type { font-size: 11px; letter-spacing: 0.5px; }
   .hidden { display: none !important; }
   .sentence-box { background: #1c1e1a; border-left: 3px solid #9db47a; padding: 12px 16px; font-family: 'Courier New', monospace; font-size: 17px; }
@@ -103,6 +152,34 @@
     <h3 class="mb-1">Hola, <span id="dashName" class="text-accent"></span></h3>
     <p class="text-secondary mb-5">Selecciona un bloque para comenzar o continuar tu entrenamiento. Tu progreso se guarda automáticamente.</p>
     <div class="row g-4" id="blocksRow"></div>
+
+    <hr class="my-5" style="border-color:#3d4030;">
+    <h4 class="mb-1">Organigramas y cadena de mando</h4>
+    <p class="text-secondary mb-4">Arrastra (o toca) cada término hasta el espacio correcto del organigrama.</p>
+    <div class="row g-4" id="orgCardsRow"></div>
+  </div>
+
+  <!-- ===== ORG CHART SCREEN ===== -->
+  <div id="screenOrgChart" class="hidden">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <button class="btn btn-sm btn-outline-accent" id="orgBackToDashboard">&larr; Volver al panel</button>
+      <span class="text-secondary small" id="orgHint">Toca una palabra y luego el espacio donde va.</span>
+    </div>
+
+    <div class="card p-4 shadow mb-3">
+      <h5 class="mb-3" id="orgChartTitle"></h5>
+      <div id="orgChartCanvas" class="mb-4"></div>
+
+      <p class="text-secondary small text-uppercase mb-2">Banco de palabras</p>
+      <div id="orgWordBank" class="d-flex flex-wrap gap-2 mb-3"></div>
+
+      <div id="orgFeedback" class="alert mt-3 hidden" role="alert"></div>
+
+      <div class="text-end mt-3">
+        <button class="btn btn-outline-accent me-2" id="orgResetBtn">Reiniciar</button>
+        <button class="btn btn-accent px-4" id="orgCheckBtn">Comprobar</button>
+      </div>
+    </div>
   </div>
 
   <!-- ===== QUIZ SCREEN ===== -->
@@ -177,175 +254,257 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 // ============ QUESTION BANK ============
+// mc = { cat, type:'mc', text, options[3-4], correct: index }
+// correction = { cat, type:'correction', sentence, flagged, options[3], correct: index, explain }
+// fill = { cat, type:'fill', text (with {blank}), hint, answers[], explain }
+
+const NEW_GRAMMAR = [
+  { cat: "Grammar", type: "mc", text: "Yesterday, the patrol {blank} at the Checkpoint at 0800 hours.", options: ["arrive", "arrived", "arriving"], correct: 1 },
+  { cat: "Grammar", type: "mc", text: "Peacekeepers {blank} use weapon force, except for self-defense.", options: ["must not", "should to", "cannot to"], correct: 0 },
+  { cat: "Grammar", type: "mc", text: "While the soldiers {blank} the perimeter, they heard an explosion.", options: ["inspect", "were inspecting", "are inspect"], correct: 1 },
+  { cat: "Grammar", type: "mc", text: "The Force Commander {blank} to the headquarters two hours ago.", options: ["speak", "spoken", "spoke"], correct: 2 },
+  { cat: "Grammar", type: "mc", text: "Every peacekeeper {blank} wear a blue helmet during the operation.", options: ["must", "have to", "can"], correct: 1 },
+  { cat: "Grammar", type: "mc", text: "If you see a suspicious package, {blank} touch it.", options: ["no", "not", "do not"], correct: 2 },
+  { cat: "Grammar", type: "mc", text: "There {blank} three convoys at the base last night.", options: ["was", "were", "are"], correct: 1 },
+  { cat: "Grammar", type: "mc", text: "The medical team is ready. They {blank} arrive in ten minutes.", options: ["will", "did", "was"], correct: 0 },
+  { cat: "Grammar", type: "mc", text: "Officer Gomez {blank} French and English fluently.", options: ["speak", "speaks", "speaking"], correct: 1 },
+  { cat: "Grammar", type: "mc", text: "You {blank} check your equipment before every patrol.", options: ["should", "would", "might"], correct: 0 },
+  { cat: "Grammar", type: "mc", text: "The convoy didn't {blank} any problems on the road.", options: ["had", "have", "having"], correct: 1 },
+  { cat: "Grammar", type: "mc", text: "The humanitarian aid arrived {blank} Friday morning.", options: ["in", "on", "at"], correct: 1 },
+  { cat: "Grammar", type: "mc", text: "We need to store the ammunition {blank} the armory.", options: ["inside", "on", "under"], correct: 0 },
+  { cat: "Grammar", type: "mc", text: "This is the {blank} dangerous sector in the area of responsibility.", options: ["more", "most", "much"], correct: 1 },
+  { cat: "Grammar", type: "mc", text: "The peacekeepers {blank} finished their report yet.", options: ["hasn't", "haven't", "didn't"], correct: 1 },
+  { cat: "Grammar", type: "mc", text: "Who {blank} in charge of the observation post last night?", options: ["was", "were", "did"], correct: 0 },
+  { cat: "Grammar", type: "mc", text: "Drivers must stop {blank} the stop sign at the main entrance.", options: ["at", "on", "into"], correct: 0 },
+  { cat: "Grammar", type: "mc", text: "The UN vehicle is {blank} than the civilian car.", options: ["heavy", "heavier", "heaviest"], correct: 1 },
+  { cat: "Grammar", type: "mc", text: "Soldiers {blank} enter the restricted area without permission.", options: ["are not allowed to", "not must", "don't can"], correct: 0 },
+  { cat: "Grammar", type: "mc", text: "What time {blank} the shift start yesterday?", options: ["do", "does", "did"], correct: 2 },
+  { cat: "Grammar", type: "mc", text: "The team leader wrote the report while the medic {blank} the injured civilian.", options: ["treat", "was treating", "treats"], correct: 1 },
+  { cat: "Grammar", type: "mc", text: "All personnel {blank} display their ID cards at all times.", options: ["must", "ought", "can to"], correct: 0 },
+  { cat: "Grammar", type: "mc", text: "There isn't {blank} water left in the supply truck.", options: ["many", "any", "some"], correct: 1 },
+  { cat: "Grammar", type: "mc", text: "The radio operator {blank} a distress signal five minutes ago.", options: ["receives", "receiving", "received"], correct: 2 },
+  { cat: "Grammar", type: "mc", text: "We must move {blank} because the weather is getting worse.", options: ["quick", "quickly", "quicker"], correct: 1 }
+];
+
+const NEW_VOCAB = [
+  { cat: "Military Vocabulary", type: "mc", text: "A {blank} is a military structure used for protection and observation.", options: ["checkpoint", "bunker", "kitchen"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "The soldiers are carrying {blank} with food, water, and emergency kits.", options: ["backpacks", "fuel tanks", "engines"], correct: 0 },
+  { cat: "Military Vocabulary", type: "mc", text: "Before leaving the base, the mechanic must inspect the vehicle's {blank}.", options: ["uniform", "tires", "helmet"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "An armed group established an illegal {blank} on the main highway.", options: ["runway", "hospital", "road block"], correct: 2 },
+  { cat: "Military Vocabulary", type: "mc", text: "Peacekeepers wear a {blank} vest to protect themselves from bullets.", options: ["high-visibility", "bulletproof", "waterproof"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "A group of military vehicles traveling together for safety is called a {blank}.", options: ["patrol", "squad", "convoy"], correct: 2 },
+  { cat: "Military Vocabulary", type: "mc", text: "The area where soldiers sleep and live on a base is called the {blank}.", options: ["barracks", "armory", "landing pad"], correct: 0 },
+  { cat: "Military Vocabulary", type: "mc", text: "When a radio signal is clear, we say the communication is {blank}.", options: ["loud and clear", "out of order", "off line"], correct: 0 },
+  { cat: "Military Vocabulary", type: "mc", text: "A person who is not a member of the armed forces or police is a {blank}.", options: ["peacekeeper", "civilian", "combatant"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "The area around a military base protected by guards is the {blank}.", options: ["boundary", "perimeter", "sector"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "Unexploded weapons left after a conflict are called {blank}.", options: ["UXO (Unexploded Ordnance)", "MRE (Meals Ready-to-Eat)", "PPE (Personal Protective Equipment)"], correct: 0 },
+  { cat: "Military Vocabulary", type: "mc", text: "The driver filled the truck with {blank} before the long trip.", options: ["water", "fuel", "sand"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "Medical personnel treat wounded soldiers at the field {blank}.", options: ["hospital", "headquarters", "workshop"], correct: 0 },
+  { cat: "Military Vocabulary", type: "mc", text: "The {blank} is responsible for leading the squad during the patrol.", options: ["driver", "squad leader", "radio operator"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "Peacekeepers use {blank} to see distant objects during surveillance.", options: ["flashlights", "cameras", "binoculars"], correct: 2 },
+  { cat: "Military Vocabulary", type: "mc", text: "An official document that gives permission to move through an area is a {blank}.", options: ["passport", "clearance / movement permit", "ticket"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "The main body of a rifle or handgun fires {blank} during training.", options: ["rockets", "ammunition", "flares"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "Soldiers use a {blank} to communicate over long distances in the field.", options: ["smartphone", "two-way radio", "landline"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "When a vehicle breaks down, a {blank} truck is needed to move it.", options: ["recovery", "patrol", "medical"], correct: 0 },
+  { cat: "Military Vocabulary", type: "mc", text: "The designated area where helicopters land and take off is the {blank}.", options: ["runway", "helipad", "parking lot"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "An unexpected attack by an enemy hiding in a position is an {blank}.", options: ["escort", "ambush", "inspection"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "Peacekeepers distribute food and water during a {blank} crisis.", options: ["tactical", "political", "humanitarian"], correct: 2 },
+  { cat: "Military Vocabulary", type: "mc", text: "The blue emblem on the military helmet represents the {blank}.", options: ["NATO", "United Nations", "Red Cross"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "A list of items carried in a supply truck is called a {blank}.", options: ["map", "manifest", "schedule"], correct: 1 },
+  { cat: "Military Vocabulary", type: "mc", text: "Soldiers must perform daily maintenance on their weapons to keep them {blank}.", options: ["operational", "decorative", "locked"], correct: 0 }
+];
+
+const NEW_UN = [
+  { cat: "UN Terminology", type: "mc", text: "What does the acronym UNAMIR stand for?", options: ["United Nations Armed Mission in Rwanda", "United Nations Assistance Mission for Rwanda", "United Nations Army Management in Rwanda"], correct: 1 },
+  { cat: "UN Terminology", type: "mc", text: "The term ROE in UN peacekeeping stands for:", options: ["Rules of Engagement", "Range of Escorts", "Report of Events"], correct: 0 },
+  { cat: "UN Terminology", type: "mc", text: "A temporary stop in fighting agreed upon by both sides is a {blank}.", options: ["treaty", "ceasefire", "deployment"], correct: 1 },
+  { cat: "UN Terminology", type: "mc", text: "The official area assigned to a specific UN unit is called its Area of {blank}.", options: ["Control", "Responsibility (AOR)", "Action"], correct: 1 },
+  { cat: "UN Terminology", type: "mc", text: "UN peacekeepers who monitor peace agreements without using force operate under Chapter {blank} of the UN Charter.", options: ["VI (Six)", "VII (Seven)", "IX (Nine)"], correct: 0 },
+  { cat: "UN Terminology", type: "mc", text: "The main objective of a UN peacekeeping mission is to protect {blank}.", options: ["military equipment", "civilians under threat", "government buildings only"], correct: 1 },
+  { cat: "UN Terminology", type: "mc", text: "A person forced to leave their country due to war or persecution is a {blank}.", options: ["refugee", "tourist", "migrant worker"], correct: 0 },
+  { cat: "UN Terminology", type: "mc", text: "An IDP is an Internally {blank} Person.", options: ["Destroyed", "Displaced", "Deployed"], correct: 1 },
+  { cat: "UN Terminology", type: "mc", text: "The military officer in total command of all military forces in a UN mission is the:", options: ["Chief of Police", "Force Commander", "Station Manager"], correct: 1 },
+  { cat: "UN Terminology", type: "mc", text: "The neutral zone separating two hostile forces is called a {blank}.", options: ["buffer zone", "danger zone", "green area"], correct: 0 },
+  { cat: "UN Terminology", type: "mc", text: "Sending military troops or police officers to an overseas mission area is called {blank}.", options: ["evacuation", "deployment", "rotation"], correct: 1 },
+  { cat: "UN Terminology", type: "mc", text: "The movement of troops, equipment, or supplies to support military operations is called a {blank}.", options: ["reconnaissance patrol", "combat assault", "logistics movement"], correct: 2 },
+  { cat: "UN Terminology", type: "mc", text: "The fundamental principle that UN peacekeepers must not take sides is called {blank}.", options: ["enforcement", "impartiality", "sovereignty"], correct: 1 },
+  { cat: "UN Terminology", type: "mc", text: "Human {blank} must be respected and protected by all UN personnel.", options: ["rights", "rules", "laws"], correct: 0 },
+  { cat: "UN Terminology", type: "mc", text: "A formal document that gives a UN mission its legal authority and tasks is a {blank}.", options: ["contract", "mandate", "letter"], correct: 1 },
+  { cat: "UN Terminology", type: "mc", text: "What abbreviation is used for a UN Observation Post?", options: ["OP", "CP", "HQ"], correct: 0 },
+  { cat: "UN Terminology", type: "mc", text: "The process of taking weapons away from former combatants is called {blank}.", options: ["Disarmament", "Demobilization", "Reintegration"], correct: 0 },
+  { cat: "UN Terminology", type: "mc", text: "What acronym represents the UN agency for children?", options: ["UNHCR", "UNICEF", "WHO"], correct: 1 },
+  { cat: "UN Terminology", type: "mc", text: "The main office where all mission decisions and operations are directed is the {blank}.", options: ["Base Camp", "Headquarters (HQ)", "Checkpoint"], correct: 1 },
+  { cat: "UN Terminology", type: "mc", text: "\"Blue Berets\" or \"Blue Helmets\" is a common nickname for UN {blank}.", options: ["observers", "peacekeepers", "delegates"], correct: 1 },
+  { cat: "UN Terminology", type: "mc", text: "Removing landmines from a land area to make it safe is called {blank}.", options: ["demining / mine clearance", "excavation", "demolition"], correct: 0 },
+  { cat: "UN Terminology", type: "mc", text: "Bringing international aid like food and medicine to people in need is {blank} aid.", options: ["financial", "tactical", "humanitarian"], correct: 2 },
+  { cat: "UN Terminology", type: "mc", text: "When soldiers complete their mission time and return home, it is called {blank}.", options: ["repatriation / redeployment", "enlistment", "recruitment"], correct: 0 },
+  { cat: "UN Terminology", type: "mc", text: "Forceful action authorized by the UN Security Council to restore peace is under Chapter {blank}.", options: ["V", "VI", "VII"], correct: 2 },
+  { cat: "UN Terminology", type: "mc", text: "Sexual Exploitation and Abuse (SEA) by UN personnel is strictly {blank}.", options: ["permitted", "prohibited", "optional"], correct: 1 }
+];
+
+const NEW_RADIO = [
+  { cat: "Radio Communication", type: "mc", text: "In radio code, the phrase \"ROGER\" means:", options: ["I do not understand", "Message received and understood", "Say again"], correct: 1 },
+  { cat: "Radio Communication", type: "mc", text: "In radio code, the word \"WILCO\" means:", options: ["I will comply with your instructions", "Radio check", "Wait a moment"], correct: 0 },
+  { cat: "Radio Communication", type: "mc", text: "What phrase do you use on the radio when you need the sender to repeat the message?", options: ["Repeat now", "Say again", "What did you say?"], correct: 1 },
+  { cat: "Radio Communication", type: "mc", text: "The radio distress signal for immediate life-threatening danger is:", options: ["MAYDAY", "PAN-PAN", "OVER"], correct: 0 },
+  { cat: "Radio Communication", type: "mc", text: "On a two-way radio, the word \"OVER\" means:", options: ["I have finished talking and wait for your answer", "The conversation is finished completely", "Turn off the radio"], correct: 0 },
+  { cat: "Radio Communication", type: "mc", text: "When you finish the radio transmission and do not expect an answer, you say:", options: ["OUT", "OVER", "END"], correct: 0 },
+  { cat: "Radio Communication", type: "mc", text: "Which expression is used to ask if your radio signal is clear?", options: ["How do you read me?", "Are you listening?", "Can you talk?"], correct: 0 },
+  { cat: "Radio Communication", type: "mc", text: "\"Stand by\" on the radio means:", options: ["Stop driving", "Wait for a moment", "Stand up"], correct: 1 },
+  { cat: "Radio Communication", type: "mc", text: "Identify the NATO Phonetic Code for the letter \"M\":", options: ["Mike", "Mary", "Mexico"], correct: 0 },
+  { cat: "Radio Communication", type: "mc", text: "Identify the NATO Phonetic Code for the letter \"S\":", options: ["Sierra", "Sam", "Sugar"], correct: 0 },
+  { cat: "Radio Communication", type: "mc", text: "Identify the NATO Phonetic Code for the letter \"V\":", options: ["Victor", "Victory", "Venice"], correct: 0 },
+  { cat: "Radio Communication", type: "mc", text: "How do you pronounce the number \"9\" in military radio procedure?", options: ["Nine", "Niner", "Nineteen"], correct: 1 },
+  { cat: "Radio Communication", type: "mc", text: "If an unauthorized civilian approaches a military post, the guard says:", options: ["\"Halt! Who goes there?\"", "\"Welcome, come inside!\"", "\"Where are you from?\""], correct: 0 },
+  { cat: "Radio Communication", type: "mc", text: "When reporting a casualty, MEDEVAC stands for:", options: ["Medical Evaluation", "Medical Evacuation", "Emergency Vehicle"], correct: 1 },
+  { cat: "Radio Communication", type: "mc", text: "The term ETA in logistics and movement stands for:", options: ["Estimated Time of Arrival", "Emergency Transport Action", "Exact Time Active"], correct: 0 },
+  { cat: "Radio Communication", type: "mc", text: "If a vehicle has a flat tire during patrol, the driver reports:", options: ["\"We have a mechanical breakdown.\"", "\"We are under fire.\"", "\"We lost the route.\""], correct: 0 },
+  { cat: "Radio Communication", type: "mc", text: "What is the military time equivalent for 8:00 PM?", options: ["0800 hours", "1800 hours", "2000 hours"], correct: 2 },
+  { cat: "Radio Communication", type: "mc", text: "What is the military time equivalent for 06:30 AM?", options: ["0630 hours", "1630 hours", "1830 hours"], correct: 0 },
+  { cat: "Radio Communication", type: "mc", text: "What should a peacekeeper say when asking an unknown driver to show identification?", options: ["\"Give me your papers.\"", "\"Please present your identification or movement permit.\"", "\"Who are you?\""], correct: 1 },
+  { cat: "Radio Communication", type: "mc", text: "In case of an incoming threat, the squad leader orders:", options: ["\"Take cover!\"", "\"Sit down!\"", "\"Walk slowly!\""], correct: 0 },
+  { cat: "Radio Communication", type: "mc", text: "If you receive a wrong message on the radio, you state:", options: ["\"Correction\"", "\"Error\"", "\"Mistake\""], correct: 0 },
+  { cat: "Radio Communication", type: "mc", text: "The phrase \"Negative\" in military radio standard language means:", options: ["Yes", "No / Incorrect", "Maybe"], correct: 1 },
+  { cat: "Radio Communication", type: "mc", text: "The phrase \"Affirmative\" means:", options: ["Yes / Correct", "No", "Repeat"], correct: 0 },
+  { cat: "Radio Communication", type: "mc", text: "When directing traffic at a UN checkpoint, a hand sign with an open palm extended means:", options: ["Proceed", "Stop", "Speed up"], correct: 1 },
+  { cat: "Radio Communication", type: "mc", text: "If a UN patrol finds an unknown explosive on the road, the team must:", options: ["Disarm it manually", "Cordon off the area and report to HQ", "Move it to the side of the road"], correct: 1 }
+];
+
+// ---- OLD BANK (from the first 50-question set) ----
+const OLD_FILL_KEEP = [
+  { cat: "Grammar — Present simple", type: "fill", text: "Every morning, the recruit {blank} (hear) the Bugle at Reveille.", hint: "presente simple, sujeto singular", answers: ["hears"], explain: "Sujeto singular en presente simple: hear → hears." },
+  { cat: "Grammar — Present simple", type: "fill", text: "The peacekeepers {blank} (patrol) the Buffer Zone every day.", hint: "presente simple, sujeto plural", answers: ["patrol"], explain: "Sujeto plural usa el verbo en forma base." },
+  { cat: "Grammar — Present simple", type: "fill", text: "The Sergeant always {blank} (maintain) discipline in the unit.", hint: "presente simple, sujeto singular", answers: ["maintains"], explain: "Sujeto singular: maintain → maintains." },
+  { cat: "Grammar — Past simple", type: "fill", text: "Last week, the Captain {blank} (promote) two corporals to sergeant.", hint: "pasado simple", answers: ["promoted"], explain: "\"Last week\" indica pasado simple." },
+  { cat: "Grammar — Present simple", type: "fill", text: "The platoon leader always {blank} (check) the equipment list before departure.", hint: "presente simple, sujeto singular", answers: ["checks"], explain: "Sujeto singular: check → checks." },
+  { cat: "Grammar — Past simple", type: "fill", text: "Yesterday, the recruits {blank} (clean) their rifles after the exercise.", hint: "pasado simple", answers: ["cleaned"], explain: "\"Yesterday\" indica pasado simple." },
+  { cat: "Grammar — Present simple", type: "fill", text: "During ceremonies, soldiers {blank} (not / wear) full combat gear.", hint: "negación, presente simple", answers: ["do not wear", "don't wear"], explain: "Negación en presente simple: do not + verbo base." },
+  { cat: "Grammar — Past simple", type: "fill", text: "The recruits {blank} (arrive) at the barracks an hour ago.", hint: "pasado simple", answers: ["arrived"], explain: "\"An hour ago\" indica pasado simple." },
+  { cat: "Grammar — Past simple", type: "fill", text: "The platoon {blank} (secure) the area while the medic treated the casualty.", hint: "pasado simple", answers: ["secured"], explain: "Acción pasada simple: secure → secured." },
+  { cat: "Grammar — There is / There are", type: "fill", text: "There {blank} (is/are) three Peacekeepers guarding the gate.", hint: "there + is/are, sujeto plural", answers: ["are"], explain: "\"Three Peacekeepers\" es plural." },
+  { cat: "Grammar — There is / There are", type: "fill", text: "There {blank} (is/are) no Casualties reported after the patrol.", hint: "there + is/are, plural negativo", answers: ["are"], explain: "\"Casualties\" es plural." },
+  { cat: "Grammar — There is / There are", type: "fill", text: "There {blank} (is/are) a Buffer Zone between the two camps.", hint: "there + is/are, sujeto singular", answers: ["is"], explain: "\"A Buffer Zone\" es singular." },
+  { cat: "Grammar — There is / There are", type: "fill", text: "There {blank} (is/are) not enough Water Bottles for the whole platoon.", hint: "there + is/are, sujeto plural", answers: ["are"], explain: "\"Water Bottles\" es plural." }
+];
+
+const OLD_CORRECTION_KEEP = [
+  { cat: "Spelling", type: "correction", sentence: "I am a PEACEKEPER.", flagged: "PEACEKEPER", options: ["Peacekeeper", "PazKeapear", "PeaceKipping"], correct: 0, explain: "\"Peacekeeper\" tiene doble e: peace + keep + er." },
+  { cat: "Spelling", type: "correction", sentence: "The soldier packed his RUKSACK before the march.", flagged: "RUKSACK", options: ["Rucksack", "Ruckssak", "Ruksuck"], correct: 0, explain: "\"Rucksack\" se escribe con \"ck\"." },
+  { cat: "Spelling", type: "correction", sentence: "The recruits slept in the BARAKS last night.", flagged: "BARAKS", options: ["Barracks", "Barraks", "Barrackes"], correct: 0, explain: "\"Barracks\" tiene doble r y doble c." },
+  { cat: "Spelling", type: "correction", sentence: "The Captain checked the AMUNITION supply.", flagged: "AMUNITION", options: ["Ammunition", "Amunition", "Amonition"], correct: 0, explain: "\"Ammunition\" tiene doble m." },
+  { cat: "Spelling", type: "correction", sentence: "The unit used a CAMOFLAGE net to hide the vehicle.", flagged: "CAMOFLAGE", options: ["Camouflage", "Camoflague", "Camuflage"], correct: 0, explain: "\"Camouflage\" lleva \"ou\"." },
+  { cat: "Spelling", type: "correction", sentence: "The medic treated the CASUALTIE after the explosion.", flagged: "CASUALTIE", options: ["Casualty", "Casualtie", "Casulty"], correct: 0, explain: "\"Casualty\" termina en -alty." },
+  { cat: "Spelling", type: "correction", sentence: "The soldiers wore their HELLMET during the exercise.", flagged: "HELLMET", options: ["Helmet", "Hellmet", "Helmit"], correct: 0, explain: "\"Helmet\" tiene una sola l." },
+  { cat: "Spelling", type: "correction", sentence: "The platoon crossed the OBSTICLE COURSE in record time.", flagged: "OBSTICLE", options: ["Obstacle", "Obsticle", "Obstakle"], correct: 0, explain: "\"Obstacle\" se escribe ob-sta-cle." },
+  { cat: "Spelling", type: "correction", sentence: "The NCO gave the order during DRIL practice.", flagged: "DRIL", options: ["Drill", "Dril", "Drille"], correct: 0, explain: "\"Drill\" tiene doble l." },
+  { cat: "Spelling", type: "correction", sentence: "The BUGGLE sounded at dawn to wake the recruits.", flagged: "BUGGLE", options: ["Bugle", "Buggle", "Bugel"], correct: 0, explain: "\"Bugle\" tiene una sola g." },
+  { cat: "Spelling", type: "correction", sentence: "REVEILE is played every morning at the base.", flagged: "REVEILE", options: ["Reveille", "Reveile", "Revellie"], correct: 0, explain: "\"Reveille\" lleva doble l antes de la e final." },
+  { cat: "Spelling", type: "correction", sentence: "The scout used a COMPAS to find north.", flagged: "COMPAS", options: ["Compass", "Compase", "Compaz"], correct: 0, explain: "\"Compass\" tiene doble s." },
+  { cat: "Spelling", type: "correction", sentence: "The technician repaired the radio's ANTENA.", flagged: "ANTENA", options: ["Antenna", "Antenaa", "Antennae"], correct: 0, explain: "\"Antenna\" tiene doble n." }
+];
+
+const OLD_MC_KEEP = [
+  { cat: "Abbreviations", type: "mc", text: "What is the correct expansion of NCO?", options: ["Non-Commissioned Officer", "National Command Office", "New Combat Officer", "Non-Combat Operative"], correct: 0 },
+  { cat: "Abbreviations", type: "mc", text: "APC stands for:", options: ["Armored Personnel Carrier", "Armed Patrol Convoy", "Air Personnel Command", "Assault Personnel Carrier"], correct: 0 },
+  { cat: "Abbreviations", type: "mc", text: "GPS stands for:", options: ["Global Positioning System", "General Position System", "Ground Patrol System", "Global Patrol Signal"], correct: 0 },
+  { cat: "Abbreviations", type: "mc", text: "UXO stands for:", options: ["Unexploded Ordnance", "Unified Explosive Operation", "Unarmed Extraction Object", "Unexploded Object"], correct: 0 },
+  { cat: "Abbreviations", type: "mc", text: "IFV stands for:", options: ["Infantry Fighting Vehicle", "Infantry Field Vehicle", "Individual Fighting Vehicle", "Infantry Force Vehicle"], correct: 0 },
+  { cat: "Context", type: "mc", text: "\"He packed only his Fighting Order for the short patrol.\" What does \"Fighting Order\" mean?", options: ["The minimum kit a soldier carries", "The full kit with everything needed", "The dress uniform for parades", "A set of combat rations"], correct: 0 },
+  { cat: "Context", type: "mc", text: "\"For the long deployment, every soldier carried the full Marching Order.\" What does \"Marching Order\" mean?", options: ["The minimum kit a soldier carries", "The full kit with everything the soldier needs", "The order in which units march in a parade", "A route drawn on a map"], correct: 1 },
+  { cat: "Context", type: "mc", text: "\"She has served as a peacekeeper in three different missions.\" Which best describes a peacekeeper?", options: ["A soldier who helps keep peace in a conflict zone", "A civilian who has fled a conflict zone", "A person held for questioning", "A military observer with no weapon"], correct: 0 },
+  { cat: "Context", type: "mc", text: "\"A buffer zone was set up between the two armies.\" What is a buffer zone?", options: ["An area that separates opposing forces", "A combat training area", "A restricted weapons storage area", "A refugee camp"], correct: 0 },
+  { cat: "Context", type: "mc", text: "EOD stands for:", options: ["Explosive Ordnance Disposal", "Emergency Ordnance Division", "Explosive Object Detection", "Emergency Operations Deployment"], correct: 0 },
+  { cat: "Context", type: "mc", text: "\"Both sides signed a truce after months of fighting.\" What does \"truce\" mean?", options: ["A temporary agreement to stop fighting", "A permanent peace treaty", "A military alliance", "A ceasefire violation"], correct: 0 },
+  { cat: "Context", type: "mc", text: "TCC stands for:", options: ["Troop Contributing Countries", "Tactical Combat Command", "Training and Combat Center", "Troop Command Council"], correct: 0 }
+];
+
+const OLD_LEFTOVER_FILL = [
+  { cat: "Grammar — There is / There are", type: "fill", text: "There {blank} (is/are) a Checkpoint at the entrance of the camp.", hint: "there + is/are, sujeto singular", answers: ["is"], explain: "\"A Checkpoint\" es singular." },
+  { cat: "Grammar — There is / There are", type: "fill", text: "{blank} (Is/Are) there any UXO reported in this sector?", hint: "pregunta con is/are", answers: ["Is", "is"], explain: "\"UXO\" se trata como singular/incontable en este contexto." }
+];
+
+const OLD_LEFTOVER_CORRECTION = [
+  { cat: "Spelling", type: "correction", sentence: "He kept his pistol in the HOLDSTER on his belt.", flagged: "HOLDSTER", options: ["Holster", "Holdster", "Holstar"], correct: 0, explain: "\"Holster\" no lleva d." },
+  { cat: "Spelling", type: "correction", sentence: "The RIFFLEMEN moved forward under cover fire.", flagged: "RIFFLEMEN", options: ["Riflemen", "Rifflemen", "Riflemens"], correct: 0, explain: "\"Riflemen\" tiene una sola f y no lleva -s en plural." },
+  { cat: "Spelling", type: "correction", sentence: "The police had to DETAIN the suspect at the checkpoint.", flagged: "DETAIN", options: ["Detain", "Deetain", "Detayn"], correct: 0, explain: "Ya está bien escrita: \"detain\"." },
+  { cat: "Spelling", type: "correction", sentence: "Thousands of REFUGES crossed the border after the conflict.", flagged: "REFUGES", options: ["Refugees", "Refuges", "Refugies"], correct: 0, explain: "\"Refugees\" termina en -gees." },
+  { cat: "Spelling", type: "correction", sentence: "Both sides agreed to a CEESFIRE after the negotiations.", flagged: "CEESFIRE", options: ["Ceasefire", "Ceesfire", "Ceacefire"], correct: 0, explain: "\"Ceasefire\" empieza con \"cease\"." },
+  { cat: "Spelling", type: "correction", sentence: "The BUFER ZONE kept the two armies apart.", flagged: "BUFER", options: ["Buffer", "Bufer", "Buffar"], correct: 0, explain: "\"Buffer\" tiene doble f." },
+  { cat: "Spelling", type: "correction", sentence: "The rifle was fitted with a BAYONNET for close combat.", flagged: "BAYONNET", options: ["Bayonet", "Bayonnet", "Bayonett"], correct: 0, explain: "\"Bayonet\" tiene una sola n y una sola t." }
+];
+
+const OLD_LEFTOVER_MC = [
+  { cat: "Context", type: "mc", text: "\"Thousands of refugees crossed the border after the conflict.\" Who are refugees?", options: ["Civilians forced to flee a conflict or disaster", "Soldiers who abandon their post", "Peacekeepers on leave", "Detained combatants"], correct: 0 },
+  { cat: "Context", type: "mc", text: "\"The engineers spent the day demining the old battlefield.\" What does \"demining\" mean?", options: ["Removing landmines from an area", "Disarming enemy soldiers", "Detaining suspects at a checkpoint", "Deploying troops to a new zone"], correct: 0 },
+  { cat: "Context", type: "mc", text: "\"This rifle has a higher rate of fire than the older model.\" What does \"rate of fire\" measure?", options: ["How fast a weapon fires", "How far a bullet travels", "How heavy a weapon is", "How many rounds a magazine holds"], correct: 0 }
+];
+
 const QUESTION_BANK = {
   block1: {
     title: "Bloque 1",
-    subtitle: "Ortografía y abreviaturas",
+    subtitle: "Gramática militar",
     locked: false,
-    questions: [
-      { cat: "Spelling", type: "correction", sentence: "I am a PEACEKEPER.", flagged: "PEACEKEPER",
-        options: ["Peacekeeper", "PazKeapear", "PeaceKipping"], correct: 0,
-        explain: "\"Peacekeeper\" has a double e: peace + keep + er." },
-      { cat: "Spelling", type: "correction", sentence: "The soldier packed his RUKSACK before the march.", flagged: "RUKSACK",
-        options: ["Rucksack", "Ruckssak", "Ruksuck"], correct: 0,
-        explain: "\"Rucksack\" is spelled with \"ck\", not just \"k\"." },
-      { cat: "Spelling", type: "correction", sentence: "The recruits slept in the BARAKS last night.", flagged: "BARAKS",
-        options: ["Barracks", "Barraks", "Barrackes"], correct: 0,
-        explain: "\"Barracks\" has a double r and a double c." },
-      { cat: "Spelling", type: "correction", sentence: "The Captain checked the AMUNITION supply.", flagged: "AMUNITION",
-        options: ["Ammunition", "Amunition", "Amonition"], correct: 0,
-        explain: "\"Ammunition\" has a double m." },
-      { cat: "Spelling", type: "correction", sentence: "The unit used a CAMOFLAGE net to hide the vehicle.", flagged: "CAMOFLAGE",
-        options: ["Camouflage", "Camoflague", "Camuflage"], correct: 0,
-        explain: "\"Camouflage\" is spelled c-a-m-o-u-f-l-a-g-e, with \"ou\"." },
-      { cat: "Spelling", type: "correction", sentence: "The medic treated the CASUALTIE after the explosion.", flagged: "CASUALTIE",
-        options: ["Casualty", "Casualtie", "Casulty"], correct: 0,
-        explain: "\"Casualty\" ends in -alty, not -altie." },
-      { cat: "Spelling", type: "correction", sentence: "The soldiers wore their HELLMET during the exercise.", flagged: "HELLMET",
-        options: ["Helmet", "Hellmet", "Helmit"], correct: 0,
-        explain: "\"Helmet\" has a single l." },
-      { cat: "Spelling", type: "correction", sentence: "The platoon crossed the OBSTICLE COURSE in record time.", flagged: "OBSTICLE",
-        options: ["Obstacle", "Obsticle", "Obstakle"], correct: 0,
-        explain: "\"Obstacle\" is spelled ob-sta-cle, with \"a\" in the second syllable." },
-      { cat: "Spelling", type: "correction", sentence: "The NCO gave the order during DRIL practice.", flagged: "DRIL",
-        options: ["Drill", "Dril", "Drille"], correct: 0,
-        explain: "\"Drill\" has a double l." },
-      { cat: "Spelling", type: "correction", sentence: "The BUGGLE sounded at dawn to wake the recruits.", flagged: "BUGGLE",
-        options: ["Bugle", "Buggle", "Bugel"], correct: 0,
-        explain: "\"Bugle\" has a single g: b-u-g-l-e." },
-      { cat: "Spelling", type: "correction", sentence: "REVEILE is played every morning at the base.", flagged: "REVEILE",
-        options: ["Reveille", "Reveile", "Revellie"], correct: 0,
-        explain: "\"Reveille\" is spelled with a double l before the final e: r-e-v-e-i-l-l-e." },
-      { cat: "Spelling", type: "correction", sentence: "The scout used a COMPAS to find north.", flagged: "COMPAS",
-        options: ["Compass", "Compase", "Compaz"], correct: 0,
-        explain: "\"Compass\" has a double s at the end." },
-      { cat: "Spelling", type: "correction", sentence: "The technician repaired the radio's ANTENA.", flagged: "ANTENA",
-        options: ["Antenna", "Antenaa", "Antennae"], correct: 0,
-        explain: "\"Antenna\" has a double n: an-ten-na." },
-      { cat: "Spelling", type: "correction", sentence: "He kept his pistol in the HOLDSTER on his belt.", flagged: "HOLDSTER",
-        options: ["Holster", "Holdster", "Holstar"], correct: 0,
-        explain: "\"Holster\" has no d: h-o-l-s-t-e-r." },
-      { cat: "Spelling", type: "correction", sentence: "The RIFFLEMEN moved forward under cover fire.", flagged: "RIFFLEMEN",
-        options: ["Riflemen", "Rifflemen", "Riflemens"], correct: 0,
-        explain: "\"Riflemen\" has a single f, and the plural takes no extra -s." },
-      { cat: "Spelling", type: "correction", sentence: "The police had to DETAIN the suspect at the checkpoint.", flagged: "DETAIN",
-        options: ["Detain", "Deetain", "Detayn"], correct: 0,
-        explain: "This word is already spelled correctly: \"detain\"." },
-      { cat: "Spelling", type: "correction", sentence: "Thousands of REFUGES crossed the border after the conflict.", flagged: "REFUGES",
-        options: ["Refugees", "Refuges", "Refugies"], correct: 0,
-        explain: "\"Refugees\" ends in -gees, with a double e before the plural s." },
-      { cat: "Spelling", type: "correction", sentence: "Both sides agreed to a CEESFIRE after the negotiations.", flagged: "CEESFIRE",
-        options: ["Ceasefire", "Ceesfire", "Ceacefire"], correct: 0,
-        explain: "\"Ceasefire\" starts with \"cease\", not \"ceese\" or \"ceace\"." },
-      { cat: "Spelling", type: "correction", sentence: "The BUFER ZONE kept the two armies apart.", flagged: "BUFER",
-        options: ["Buffer", "Bufer", "Buffar"], correct: 0,
-        explain: "\"Buffer\" has a double f." },
-      { cat: "Spelling", type: "correction", sentence: "The rifle was fitted with a BAYONNET for close combat.", flagged: "BAYONNET",
-        options: ["Bayonet", "Bayonnet", "Bayonett"], correct: 0,
-        explain: "\"Bayonet\" has a single n and a single t: b-a-y-o-n-e-t." },
-      { cat: "Abbreviations", type: "mc", text: "What is the correct expansion of NCO?",
-        options: ["Non-Commissioned Officer", "National Command Office", "New Combat Officer", "Non-Combat Operative"], correct: 0 },
-      { cat: "Abbreviations", type: "mc", text: "APC stands for:",
-        options: ["Armored Personnel Carrier", "Armed Patrol Convoy", "Air Personnel Command", "Assault Personnel Carrier"], correct: 0 },
-      { cat: "Abbreviations", type: "mc", text: "GPS stands for:",
-        options: ["Global Positioning System", "General Position System", "Ground Patrol System", "Global Patrol Signal"], correct: 0 },
-      { cat: "Abbreviations", type: "mc", text: "UXO stands for:",
-        options: ["Unexploded Ordnance", "Unified Explosive Operation", "Unarmed Extraction Object", "Unexploded Object"], correct: 0 },
-      { cat: "Abbreviations", type: "mc", text: "IFV stands for:",
-        options: ["Infantry Fighting Vehicle", "Infantry Field Vehicle", "Individual Fighting Vehicle", "Infantry Force Vehicle"], correct: 0 }
-    ]
+    questions: [...NEW_GRAMMAR, ...OLD_FILL_KEEP]
   },
   block2: {
     title: "Bloque 2",
-    subtitle: "Contexto y gramática básica",
+    subtitle: "Vocabulario y ortografía militar",
     locked: false,
-    questions: [
-      { cat: "Context", type: "mc", text: "\"He packed only his Fighting Order for the short patrol.\" What does \"Fighting Order\" mean?",
-        options: ["The minimum kit a soldier carries", "The full kit with everything needed", "The dress uniform for parades", "A set of combat rations"], correct: 0 },
-      { cat: "Context", type: "mc", text: "\"For the long deployment, every soldier carried the full Marching Order.\" What does \"Marching Order\" mean?",
-        options: ["The minimum kit a soldier carries", "The full kit with everything the soldier needs", "The order in which units march in a parade", "A route drawn on a map"], correct: 1 },
-      { cat: "Context", type: "mc", text: "\"She has served as a peacekeeper in three different missions.\" Which best describes a peacekeeper?",
-        options: ["A soldier who helps keep peace in a conflict zone", "A civilian who has fled a conflict zone", "A person held for questioning", "A military observer with no weapon"], correct: 0 },
-      { cat: "Context", type: "mc", text: "\"A buffer zone was set up between the two armies.\" What is a buffer zone?",
-        options: ["An area that separates opposing forces", "A combat training area", "A restricted weapons storage area", "A refugee camp"], correct: 0 },
-      { cat: "Context", type: "mc", text: "EOD stands for:",
-        options: ["Explosive Ordnance Disposal", "Emergency Ordnance Division", "Explosive Object Detection", "Emergency Operations Deployment"], correct: 0 },
-      { cat: "Context", type: "mc", text: "\"Both sides signed a truce after months of fighting.\" What does \"truce\" mean?",
-        options: ["A temporary agreement to stop fighting", "A permanent peace treaty", "A military alliance", "A ceasefire violation"], correct: 0 },
-      { cat: "Context", type: "mc", text: "TCC stands for:",
-        options: ["Troop Contributing Countries", "Tactical Combat Command", "Training and Combat Center", "Troop Command Council"], correct: 0 },
-      { cat: "Context", type: "mc", text: "\"Thousands of refugees crossed the border after the conflict.\" Who are refugees?",
-        options: ["Civilians forced to flee a conflict or disaster", "Soldiers who abandon their post", "Peacekeepers on leave", "Detained combatants"], correct: 0 },
-      { cat: "Context", type: "mc", text: "\"The engineers spent the day demining the old battlefield.\" What does \"demining\" mean?",
-        options: ["Removing landmines from an area", "Disarming enemy soldiers", "Detaining suspects at a checkpoint", "Deploying troops to a new zone"], correct: 0 },
-      { cat: "Context", type: "mc", text: "\"This rifle has a higher rate of fire than the older model.\" What does \"rate of fire\" measure?",
-        options: ["How fast a weapon fires", "How far a bullet travels", "How heavy a weapon is", "How many rounds a magazine holds"], correct: 0 },
+    questions: [...NEW_VOCAB, ...OLD_CORRECTION_KEEP]
+  },
+  block3: {
+    title: "Bloque 3",
+    subtitle: "Terminología de la ONU",
+    locked: false,
+    questions: [...NEW_UN, ...OLD_MC_KEEP]
+  },
+  block4: {
+    title: "Bloque 4",
+    subtitle: "Comunicación y procedimientos operativos",
+    locked: false,
+    questions: [...NEW_RADIO, ...OLD_LEFTOVER_FILL, ...OLD_LEFTOVER_CORRECTION, ...OLD_LEFTOVER_MC]
+  }
+};
 
-      { cat: "Grammar — Present simple", type: "fill",
-        text: "Every morning, the recruit {blank} (hear) the Bugle at Reveille.",
-        hint: "presente simple, sujeto singular", answers: ["hears"],
-        explain: "Sujeto singular (\"the recruit\") en presente simple: hear → hears." },
-      { cat: "Grammar — Present simple", type: "fill",
-        text: "The peacekeepers {blank} (patrol) the Buffer Zone every day.",
-        hint: "presente simple, sujeto plural", answers: ["patrol"],
-        explain: "Sujeto plural usa el verbo en forma base, sin -s." },
-      { cat: "Grammar — Present simple", type: "fill",
-        text: "The Sergeant always {blank} (maintain) discipline in the unit.",
-        hint: "presente simple, sujeto singular", answers: ["maintains"],
-        explain: "Sujeto singular \"the Sergeant\": maintain → maintains." },
-      { cat: "Grammar — Past simple", type: "fill",
-        text: "Last week, the Captain {blank} (promote) two corporals to sergeant.",
-        hint: "pasado simple", answers: ["promoted"],
-        explain: "\"Last week\" indica pasado simple: promote → promoted." },
-      { cat: "Grammar — Present simple", type: "fill",
-        text: "The platoon leader always {blank} (check) the equipment list before departure.",
-        hint: "presente simple, sujeto singular", answers: ["checks"],
-        explain: "Sujeto singular: check → checks." },
-      { cat: "Grammar — Past simple", type: "fill",
-        text: "Yesterday, the recruits {blank} (clean) their rifles after the exercise.",
-        hint: "pasado simple", answers: ["cleaned"],
-        explain: "\"Yesterday\" indica pasado simple: clean → cleaned." },
-      { cat: "Grammar — Present simple", type: "fill",
-        text: "During ceremonies, soldiers {blank} (not / wear) full combat gear.",
-        hint: "negación, presente simple", answers: ["do not wear", "don't wear"],
-        explain: "Negación en presente simple con sujeto plural: do not + verbo base." },
-      { cat: "Grammar — Past simple", type: "fill",
-        text: "The recruits {blank} (arrive) at the barracks an hour ago.",
-        hint: "pasado simple", answers: ["arrived"],
-        explain: "\"An hour ago\" indica pasado simple: arrive → arrived." },
-      { cat: "Grammar — Past simple", type: "fill",
-        text: "The platoon {blank} (secure) the area while the medic treated the casualty.",
-        hint: "pasado simple", answers: ["secured"],
-        explain: "Acción pasada simple: secure → secured." },
-      { cat: "Grammar — There is / There are", type: "fill",
-        text: "There {blank} (is/are) a Checkpoint at the entrance of the camp.",
-        hint: "there + is/are, sujeto singular", answers: ["is"],
-        explain: "\"A Checkpoint\" es singular, entonces va \"There is\"." },
-      { cat: "Grammar — There is / There are", type: "fill",
-        text: "There {blank} (is/are) three Peacekeepers guarding the gate.",
-        hint: "there + is/are, sujeto plural", answers: ["are"],
-        explain: "\"Three Peacekeepers\" es plural, entonces va \"There are\"." },
-      { cat: "Grammar — There is / There are", type: "fill",
-        text: "There {blank} (is/are) no Casualties reported after the patrol.",
-        hint: "there + is/are, sujeto plural negativo", answers: ["are"],
-        explain: "\"Casualties\" es plural, entonces va \"There are no...\"." },
-      { cat: "Grammar — There is / There are", type: "fill",
-        text: "There {blank} (is/are) a Buffer Zone between the two camps.",
-        hint: "there + is/are, sujeto singular", answers: ["is"],
-        explain: "\"A Buffer Zone\" es singular, entonces va \"There is\"." },
-      { cat: "Grammar — There is / There are", type: "fill",
-        text: "There {blank} (is/are) not enough Water Bottles for the whole platoon.",
-        hint: "there + is/are, sujeto plural", answers: ["are"],
-        explain: "\"Water Bottles\" es plural, entonces va \"There are not enough...\"." },
-      { cat: "Grammar — There is / There are", type: "fill",
-        text: "{blank} (Is/Are) there any UXO reported in this sector?",
-        hint: "pregunta con is/are", answers: ["Is", "is"],
-        explain: "\"UXO\" (Unexploded Ordnance) se trata como singular/incontable en este contexto: \"Is there any UXO...?\"." }
+// ============ ORG CHART DATA ============
+const ORG_CHARTS = {
+  chainOfCommand: {
+    title: "Cadena de mando — Misión de paz de la ONU",
+    wordBank: ["Sector Commander", "Force Commander", "Secretary General of the United Nations"],
+    levels: [
+      { type: "fixed", label: "United Nations Security Council" },
+      { type: "blank", id: "b1", answer: "Secretary General of the United Nations" },
+      { type: "fixed", label: "Head of Mission" },
+      { type: "blank", id: "b2", answer: "Force Commander" },
+      { type: "blank", id: "b3", answer: "Sector Commander" },
+      { type: "fixed", label: "Contingent Commander" }
     ]
   },
-  block3: { title: "Bloque 3", subtitle: "Próximamente", locked: true, questions: [] },
-  block4: { title: "Bloque 4", subtitle: "Próximamente", locked: true, questions: [] }
+  hqStructure: {
+    title: "Estructura del cuartel general (HQ Sector West)",
+    wordBank: ["Command Group", "Chief of Staff", "Operations", "Communications"],
+    top: { type: "fixed", label: "Commander", sublabel: "Sector West" },
+    middleRow: [
+      { type: "blank", id: "b1", answer: "Command Group", sublabel: "RSM, Military Assistant, Driver" },
+      { type: "blank", id: "b2", answer: "Chief of Staff", sublabel: "HQ Sector West" },
+      { type: "fixed", label: "Defence Platoon" }
+    ],
+    extraFixed: ["Movement Control Detachment", "Liaison Officers"],
+    cellsRow: [
+      { type: "fixed", label: "S1 and 4 Cell", sublabel: "Personnel and Logistics" },
+      { type: "fixed", label: "S2 Cell", sublabel: "Information" },
+      { type: "blank", id: "b3", answer: "Operations", sublabel: "S3 Cell" },
+      { type: "fixed", label: "S5 Cell", sublabel: "Plans" },
+      { type: "blank", id: "b4", answer: "Communications", sublabel: "S6 Cell" },
+      { type: "fixed", label: "S9 Cell", sublabel: "Civil Liaison & Humanitarian Assistance" }
+    ]
+  }
 };
+
+let orgActiveChart = null;
+let orgPlacements = {};
+let orgWordBank = [];
+let orgSelectedWord = null;
 
 // ============ STATE ============
 let studentId = null;
@@ -363,8 +522,10 @@ const screenQuiz = document.getElementById('screenQuiz');
 const screenResults = document.getElementById('screenResults');
 const navUser = document.getElementById('navUser');
 
+const screenOrgChart = document.getElementById('screenOrgChart');
+
 function showScreen(el) {
-  [screenName, screenDashboard, screenQuiz, screenResults].forEach(s => s.classList.add('hidden'));
+  [screenName, screenDashboard, screenQuiz, screenResults, screenOrgChart].forEach(s => s.classList.add('hidden'));
   el.classList.remove('hidden');
 }
 
@@ -438,6 +599,35 @@ function renderDashboard() {
     }
     row.appendChild(col);
   });
+  renderOrgCards();
+}
+
+function renderOrgCards() {
+  const row = document.getElementById('orgCardsRow');
+  row.innerHTML = '';
+  if (!studentData.orgcharts) studentData.orgcharts = {};
+  Object.keys(ORG_CHARTS).forEach(key => {
+    const chart = ORG_CHARTS[key];
+    const progress = studentData.orgcharts[key];
+    const pct = progress ? progress.pct : 0;
+    const totalBlanks = chart.levels
+      ? chart.levels.filter(l => l.type === 'blank').length
+      : chart.middleRow.filter(l => l.type === 'blank').length + chart.cellsRow.filter(l => l.type === 'blank').length;
+
+    const col = document.createElement('div');
+    col.className = 'col-12 col-md-6';
+    col.innerHTML = `
+      <div class="card org-card h-100 p-4">
+        <div class="d-flex justify-content-between align-items-start">
+          <h6 class="mb-1">${chart.title}</h6>
+          <span class="badge ${pct >= 100 ? 'bg-success' : pct > 0 ? 'bg-warning text-dark' : 'bg-secondary'}">${pct}%</span>
+        </div>
+        <p class="text-secondary small mb-0">${totalBlanks} espacios por completar</p>
+      </div>
+    `;
+    col.querySelector('.org-card').addEventListener('click', () => openOrgChart(key));
+    row.appendChild(col);
+  });
 }
 
 document.getElementById('backToDashboard').addEventListener('click', () => {
@@ -505,7 +695,9 @@ function renderQuestion() {
     buildOptions(currentOptions);
   } else if (q.type === 'mc') {
     sentenceWrap.classList.add('hidden');
-    questionText.textContent = q.text;
+    questionText.innerHTML = q.text.includes('{blank}')
+      ? q.text.split('{blank}').join(' <u>______</u> ')
+      : q.text;
     mcOptions.classList.remove('hidden');
     fillArea.classList.add('hidden');
     currentOptions = getShuffledOptions(q);
@@ -634,7 +826,7 @@ function showResults(pct) {
       let qText, correctText;
       if (a.q.type === 'fill') { qText = a.q.text.replace('{blank}', '____'); correctText = a.q.answers[0]; }
       else if (a.q.type === 'correction') { qText = a.q.sentence; correctText = a.q.options[a.q.correct]; }
-      else { qText = a.q.text; correctText = a.q.options[a.q.correct]; }
+      else { qText = a.q.text.replace('{blank}', '____'); correctText = a.q.options[a.q.correct]; }
       const div = document.createElement('div');
       div.className = 'border-bottom border-secondary-subtle py-2 small';
       div.innerHTML = `<p class="mb-1 text-secondary">${qText}</p><p class="mb-0">Tu respuesta: "${a.userAnswerText}" &middot; Correcta: <strong class="text-accent">${correctText}</strong></p>`;
@@ -642,6 +834,183 @@ function showResults(pct) {
     });
   }
 }
+
+// ============ ORG CHART ENGINE ============
+document.getElementById('orgBackToDashboard').addEventListener('click', () => {
+  showScreen(screenDashboard);
+  renderDashboard();
+});
+
+function openOrgChart(key) {
+  orgActiveChart = key;
+  const chart = ORG_CHARTS[key];
+  orgPlacements = {};
+  const blankIds = chart.levels
+    ? chart.levels.filter(l => l.type === 'blank').map(l => l.id)
+    : [...chart.middleRow, ...chart.cellsRow].filter(l => l.type === 'blank').map(l => l.id);
+  blankIds.forEach(id => orgPlacements[id] = null);
+  orgWordBank = shuffle(chart.wordBank);
+  orgSelectedWord = null;
+
+  document.getElementById('orgChartTitle').textContent = chart.title;
+  document.getElementById('orgFeedback').classList.add('hidden');
+  document.getElementById('orgCheckBtn').disabled = false;
+  document.getElementById('orgCheckBtn').textContent = 'Comprobar';
+
+  if (key === 'chainOfCommand') renderChainChart();
+  else renderHQChart();
+  renderOrgWordBank();
+  showScreen(screenOrgChart);
+}
+
+function getBlankDef(id) {
+  const chart = ORG_CHARTS[orgActiveChart];
+  if (chart.levels) return chart.levels.find(l => l.id === id);
+  return [...chart.middleRow, ...chart.cellsRow].find(l => l.id === id);
+}
+
+function orgBoxHTML(node) {
+  if (node.type === 'fixed') {
+    return `<div class="org-box fixed">${node.label}${node.sublabel ? '<span class="org-sublabel">' + node.sublabel + '</span>' : ''}</div>`;
+  }
+  const filled = orgPlacements[node.id];
+  return `<div class="org-slot" data-blank="${node.id}">${filled ? filled : (node.sublabel || 'Coloca aquí')}</div>`;
+}
+
+function renderChainChart() {
+  const chart = ORG_CHARTS.chainOfCommand;
+  const canvas = document.getElementById('orgChartCanvas');
+  let html = '<div style="max-width:420px;margin:0 auto;">';
+  chart.levels.forEach((node, i) => {
+    html += orgBoxHTML(node);
+    if (i < chart.levels.length - 1) html += '<div class="org-connector"></div>';
+  });
+  html += '</div>';
+  canvas.innerHTML = html;
+  attachSlotEvents();
+}
+
+function renderHQChart() {
+  const chart = ORG_CHARTS.hqStructure;
+  const canvas = document.getElementById('orgChartCanvas');
+  let html = '<div class="text-center mb-2">' + orgBoxHTML(chart.top) + '</div>';
+  html += '<div class="org-connector"></div>';
+  html += '<div class="row g-2 mb-2">';
+  chart.middleRow.forEach(node => { html += '<div class="col-4">' + orgBoxHTML(node) + '</div>'; });
+  html += '</div>';
+  html += '<div class="row g-2 mb-3">';
+  chart.extraFixed.forEach(label => { html += `<div class="col-6"><div class="org-box fixed">${label}</div></div>`; });
+  html += '</div>';
+  html += '<div class="org-connector"></div>';
+  html += '<div class="row g-2">';
+  chart.cellsRow.forEach(node => { html += '<div class="col-4 col-md-2">' + orgBoxHTML(node) + '</div>'; });
+  html += '</div>';
+  canvas.innerHTML = html;
+  attachSlotEvents();
+}
+
+function attachSlotEvents() {
+  document.querySelectorAll('.org-slot').forEach(slot => {
+    slot.addEventListener('click', () => onSlotClick(slot.dataset.blank));
+    slot.addEventListener('dragover', e => e.preventDefault());
+    slot.addEventListener('drop', e => {
+      e.preventDefault();
+      const word = e.dataTransfer.getData('text/plain');
+      if (word) placeWord(slot.dataset.blank, word);
+    });
+  });
+}
+
+function renderOrgWordBank() {
+  const bank = document.getElementById('orgWordBank');
+  bank.innerHTML = '';
+  if (!orgWordBank.length) {
+    bank.innerHTML = '<span class="text-secondary small">Todas las palabras están colocadas.</span>';
+    return;
+  }
+  orgWordBank.forEach(word => {
+    const chip = document.createElement('div');
+    chip.className = 'org-chip' + (orgSelectedWord === word ? ' selected' : '');
+    chip.textContent = word;
+    chip.draggable = true;
+    chip.addEventListener('click', () => {
+      orgSelectedWord = orgSelectedWord === word ? null : word;
+      renderOrgWordBank();
+    });
+    chip.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', word);
+    });
+    bank.appendChild(chip);
+  });
+}
+
+function onSlotClick(blankId) {
+  const current = orgPlacements[blankId];
+  if (current) {
+    // return word already in slot back to bank
+    orgWordBank.push(current);
+    orgPlacements[blankId] = null;
+    renderOrgWordBank();
+    rerenderActiveChart();
+    return;
+  }
+  if (orgSelectedWord) {
+    placeWord(blankId, orgSelectedWord);
+  }
+}
+
+function placeWord(blankId, word) {
+  const idx = orgWordBank.indexOf(word);
+  if (idx === -1) return;
+  // if slot already has a word, return it to bank first
+  if (orgPlacements[blankId]) orgWordBank.push(orgPlacements[blankId]);
+  orgWordBank.splice(idx, 1);
+  orgPlacements[blankId] = word;
+  orgSelectedWord = null;
+  renderOrgWordBank();
+  rerenderActiveChart();
+}
+
+function rerenderActiveChart() {
+  if (orgActiveChart === 'chainOfCommand') renderChainChart();
+  else renderHQChart();
+}
+
+document.getElementById('orgResetBtn').addEventListener('click', () => openOrgChart(orgActiveChart));
+
+document.getElementById('orgCheckBtn').addEventListener('click', async () => {
+  const chart = ORG_CHARTS[orgActiveChart];
+  const blankDefs = chart.levels
+    ? chart.levels.filter(l => l.type === 'blank')
+    : [...chart.middleRow, ...chart.cellsRow].filter(l => l.type === 'blank');
+
+  let correctCount = 0;
+  blankDefs.forEach(def => {
+    const slot = document.querySelector(`.org-slot[data-blank="${def.id}"]`);
+    if (!slot) return;
+    const placed = orgPlacements[def.id];
+    if (placed && placed === def.answer) {
+      slot.classList.add('correct');
+      correctCount++;
+    } else if (placed) {
+      slot.classList.add('incorrect');
+    }
+  });
+
+  const pct = Math.round((correctCount / blankDefs.length) * 100);
+  const feedback = document.getElementById('orgFeedback');
+  feedback.classList.remove('hidden');
+  feedback.className = 'alert mt-3 ' + (pct === 100 ? 'alert-success' : pct >= 50 ? 'alert-warning' : 'alert-danger');
+  feedback.textContent = `${correctCount} de ${blankDefs.length} correctas (${pct}%).` + (pct < 100 ? ' Revisa los espacios en rojo y vuelve a intentar.' : ' ¡Excelente, organigrama completo!');
+
+  if (!studentData.orgcharts) studentData.orgcharts = {};
+  studentData.orgcharts[orgActiveChart] = { pct, correct: correctCount, total: blankDefs.length, completedAt: new Date().toISOString() };
+  try {
+    await db.collection('students').doc(studentId).set(studentData, { merge: true });
+  } catch (err) {
+    console.error('Error guardando progreso de organigrama:', err);
+  }
+});
 </script>
 </body>
 </html>
