@@ -6,41 +6,65 @@
 <title>Inglés Técnico Militar — BHR</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
+  :root {
+    --bg-deep:     #14150f;
+    --bg-body:     #1b1d17;
+    --bg-panel:    #24261e;
+    --bg-input:    #191b15;
+    --border:      #44493a;
+    --border-soft: #34382c;
+    --text-main:   #f4f1e6;
+    --text-dim:    #b7b39e;   /* replaces bootstrap's low-contrast gray on dark bg */
+    --accent:      #a9d47c;   /* brighter olive-green, passes contrast on dark bg */
+    --accent-dark: #5c7a43;
+    --accent-deep: #3f5a2c;
+    --warn:        #e8b95a;
+    --warn-bg:     #3a2f14;
+    --danger:      #e8836a;
+    --danger-bg:   #3a1c17;
+    --info:        #7fc0ee;
+    --info-bg:     #16283a;
+    --success:     #7fd48f;
+    --success-bg:  #17331e;
+  }
+
   body {
-    background: #1c1e1a;
-    background-image: radial-gradient(circle at 50% 0%, #2a2d24 0%, #1c1e1a 60%);
-    color: #eae6d8;
+    background: var(--bg-body);
+    background-image: radial-gradient(circle at 50% 0%, var(--bg-panel) 0%, var(--bg-body) 60%);
+    color: var(--text-main);
     min-height: 100vh;
   }
   .navbar-brand { letter-spacing: 1px; font-weight: 700; }
-  .card { background: #26281f; border: 1px solid #3d4030; color: #eae6d8; }
-  .card-muted { opacity: 0.55; }
-  .text-accent { color: #9db47a !important; }
-  .btn-accent { background: #4f6b3a; border-color: #4f6b3a; color: #fff; }
-  .btn-accent:hover { background: #5c7a43; border-color: #5c7a43; color: #fff; }
-  .btn-outline-accent { border-color: #9db47a; color: #9db47a; }
-  .btn-outline-accent:hover { background: #9db47a; color: #1c1e1a; }
-  .form-control, .form-control:focus { background: #1c1e1a; color: #eae6d8; border-color: #3d4030; }
-  .form-control:focus { box-shadow: 0 0 0 .2rem rgba(157,180,122,.25); }
+  .card { background: var(--bg-panel); border: 1px solid var(--border-soft); color: var(--text-main); }
+  .card-muted { opacity: 0.6; }
+  .text-accent { color: var(--accent) !important; }
+  .text-secondary { color: var(--text-dim) !important; }
+  .btn-accent { background: var(--accent-dark); border-color: var(--accent-dark); color: #fff; font-weight: 600; }
+  .btn-accent:hover { background: var(--accent); border-color: var(--accent); color: #14150f; }
+  .btn-outline-accent { border-color: var(--accent); color: var(--accent); }
+  .btn-outline-accent:hover { background: var(--accent); color: #14150f; }
+  .form-control, .form-control:focus { background: var(--bg-input); color: var(--text-main); border-color: var(--border); }
+  .form-control::placeholder { color: #8a866f; }
+  .form-control:focus { box-shadow: 0 0 0 .2rem rgba(169,212,124,.28); border-color: var(--accent); }
   .form-control:disabled,
   .form-control.is-valid,
-  .form-control.is-invalid { background-color: #1c1e1a !important; color: #eae6d8 !important; opacity: 1; }
-  .form-control.is-valid { border-color: #6b9c4f !important; }
-  .form-control.is-invalid { border-color: #a85c4a !important; }
+  .form-control.is-invalid { background-color: var(--bg-input) !important; color: var(--text-main) !important; opacity: 1; }
+  .form-control.is-valid { border-color: var(--success) !important; }
+  .form-control.is-invalid { border-color: var(--danger) !important; }
 
-  .badge.bg-secondary { background-color: #3d4030 !important; color: #eae6d8 !important; }
-  .badge.bg-dark { background-color: #1c1e1a !important; color: #9db47a !important; border-color: #4f6b3a !important; }
+  .badge.bg-secondary { background-color: var(--border) !important; color: var(--text-main) !important; }
+  .badge.bg-dark { background-color: var(--bg-deep) !important; color: var(--accent) !important; border-color: var(--accent-dark) !important; }
 
-  .alert-success { background: #1f2e1a; border-color: #6b9c4f; color: #bfe3ab; }
-  .alert-danger { background: #2e1a1a; border-color: #a85c4a; color: #e8c3ba; }
-  .alert-warning { background: #2e2a1a; border-color: #c9a24b; color: #e8d9b3; }
-  .alert-info { background: #1a2530; border-color: #5c8ab4; color: #b3d4e8; }
-  .list-group-item { background: #1c1e1a; color: #eae6d8; border-color: #3d4030; cursor: pointer; }
-  .list-group-item:hover { background: #2a2d24; }
-  .list-group-item.selected { background: #3a4a2a; border-color: #9db47a; }
-  .list-group-item.correct { background: #2f4a2a; border-color: #6b9c4f; }
-  .list-group-item.incorrect { background: #4a2f2a; border-color: #a85c4a; }
-  .progress { background: #1c1e1a; }
+  .alert-success { background: var(--success-bg); border-color: var(--success); color: #d3f0d3; }
+  .alert-danger { background: var(--danger-bg); border-color: var(--danger); color: #f5d3c8; }
+  .alert-warning { background: var(--warn-bg); border-color: var(--warn); color: #f5e5bd; }
+  .alert-info { background: var(--info-bg); border-color: var(--info); color: #cbe7f9; }
+  .list-group-item { background: var(--bg-input); color: var(--text-main); border-color: var(--border); cursor: pointer; }
+  .list-group-item:hover { background: var(--bg-panel); border-color: var(--accent); }
+  .list-group-item.selected { background: var(--accent-deep); border-color: var(--accent); }
+  .list-group-item.correct { background: var(--success-bg); border-color: var(--success); }
+  .list-group-item.incorrect { background: var(--danger-bg); border-color: var(--danger); }
+  .progress { background: var(--bg-input); }
 
   .progress-ring {
     width: 140px;
@@ -64,10 +88,10 @@
     justify-content: center;
   }
   .progress-ring-inner .pct-value { font-size: 26px; font-weight: 700; }
-  .progress-ring-inner .pct-label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #9c9885; }
+  .progress-ring-inner .pct-label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); }
 
   .block-card { cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease; }
-  .block-card:hover:not(.locked) { transform: translateY(-4px); border-color: #9db47a; }
+  .block-card:hover:not(.locked) { transform: translateY(-4px); border-color: var(--accent); }
   .block-card.locked { cursor: not-allowed; }
 
   .floating { animation: float 3.4s ease-in-out infinite; }
@@ -79,12 +103,13 @@
     50% { transform: translateY(-8px); }
   }
 
-  .flagged-word { color: #d98a6a; font-weight: 700; }
+  .flagged-word { color: var(--warn); font-weight: 700; }
 
+  /* ===== Org chart — Duolingo-style chunky pieces ===== */
   .org-box {
-    border: 2px solid #3d4030;
-    background: #1c1e1a;
-    border-radius: 6px;
+    border: 2px solid var(--border-soft);
+    background: var(--bg-input);
+    border-radius: 12px;
     padding: 10px 12px;
     text-align: center;
     font-size: 14px;
@@ -94,46 +119,81 @@
     align-items: center;
     justify-content: center;
   }
-  .org-box.fixed { background: #2a2d24; border-color: #4f6b3a; }
-  .org-box .org-sublabel { font-size: 11px; color: #9c9885; margin-top: 2px; }
+  .org-box.fixed { background: var(--bg-panel); border-color: var(--accent-dark); }
+  .org-box .org-sublabel { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+
   .org-slot {
-    border: 2px dashed #6b6650;
-    background: transparent;
-    border-radius: 6px;
-    padding: 10px 12px;
+    position: relative;
+    border: 2.5px dashed #6f7458;
+    background: rgba(255,255,255,0.02);
+    border-radius: 14px;
+    padding: 12px 12px;
     text-align: center;
     font-size: 14px;
-    min-height: 54px;
+    font-weight: 600;
+    min-height: 58px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: border-color 0.15s ease, background 0.15s ease;
+    transition: border-color 0.15s ease, background 0.15s ease, transform 0.12s ease;
   }
-  .org-slot .org-sublabel { font-size: 11px; color: #9c9885; margin-top: 2px; }
-  .org-slot:hover { border-color: #9db47a; }
-  .org-slot.filled { border-style: solid; background: #2a2d24; color: #eae6d8; }
-  .org-slot.correct { border-color: #6b9c4f; background: #2f4a2a; }
-  .org-slot.incorrect { border-color: #a85c4a; background: #4a2f2a; }
-  .org-connector { width: 2px; background: #3d4030; height: 20px; margin: 0 auto; }
+  .org-slot .org-sublabel { font-size: 11px; color: var(--text-dim); font-weight: 400; margin-top: 2px; }
+  .org-slot:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .org-slot.filled {
+    border: 2.5px solid var(--accent-dark);
+    background: var(--accent-deep);
+    color: #f4f1e6;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.35);
+  }
+  .org-slot.filled:hover { border-color: var(--accent); box-shadow: 0 4px 0 rgba(0,0,0,0.35); transform: translateY(-3px); }
+  .org-slot.filled:active { box-shadow: 0 1px 0 rgba(0,0,0,0.35); transform: translateY(1px); }
+  .org-slot.filled::after {
+    content: '⟲';
+    position: absolute;
+    top: 4px;
+    right: 8px;
+    font-size: 11px;
+    color: rgba(244,241,230,0.55);
+  }
+  .org-slot.correct { border-color: var(--success); background: var(--success-bg); box-shadow: 0 3px 0 rgba(0,0,0,0.3); }
+  .org-slot.correct::after { content: '✔'; color: var(--success); }
+  .org-slot.incorrect { border-color: var(--danger); background: var(--danger-bg); box-shadow: 0 3px 0 rgba(0,0,0,0.3); }
+  .org-slot.incorrect::after { content: '✘'; color: var(--danger); }
+  .org-slot.dragover { border-color: var(--accent); background: var(--accent-deep); transform: scale(1.03); }
+
+  .org-connector { width: 2px; background: var(--border); height: 20px; margin: 0 auto; }
+
   .org-chip {
-    background: #2a2d24;
-    border: 1px solid #9db47a;
-    color: #eae6d8;
-    border-radius: 20px;
-    padding: 7px 16px;
+    background: var(--bg-panel);
+    border: 2px solid var(--accent-dark);
+    color: var(--text-main);
+    border-radius: 999px;
+    padding: 9px 18px;
     font-size: 14px;
+    font-weight: 600;
     cursor: grab;
     user-select: none;
+    box-shadow: 0 3px 0 var(--accent-deep);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
   }
-  .org-chip.selected { background: #4f6b3a; border-color: #eae6d8; }
+  .org-chip:hover { transform: translateY(-2px); box-shadow: 0 5px 0 var(--accent-deep); }
+  .org-chip.selected { background: var(--accent); color: #14150f; border-color: var(--accent); box-shadow: 0 1px 0 var(--accent-deep); transform: translateY(2px); }
   .org-chip:active { cursor: grabbing; }
+
+  #orgHeldBar {
+    background: var(--bg-panel);
+    border: 2px dashed var(--accent);
+    border-radius: 12px;
+    padding: 10px 14px;
+  }
+
   .org-card { cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease; }
-  .org-card:hover { transform: translateY(-4px); border-color: #9db47a; }
+  .org-card:hover { transform: translateY(-4px); border-color: var(--accent); }
   .badge-type { font-size: 11px; letter-spacing: 0.5px; }
   .hidden { display: none !important; }
-  .sentence-box { background: #1c1e1a; border-left: 3px solid #9db47a; padding: 12px 16px; font-family: 'Courier New', monospace; font-size: 17px; }
+  .sentence-box { background: var(--bg-input); border-left: 3px solid var(--accent); padding: 12px 16px; font-family: 'Courier New', monospace; font-size: 17px; }
 </style>
 </head>
 <body>
@@ -178,12 +238,14 @@
   <div id="screenOrgChart" class="hidden">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <button class="btn btn-sm btn-outline-accent" id="orgBackToDashboard">&larr; Volver al panel</button>
-      <span class="text-secondary small" id="orgHint">Toca una palabra y luego el espacio donde va.</span>
+      <span class="text-secondary small" id="orgHint">Toca una palabra y luego el espacio donde va. ¿Ya la colocaste? Tócala de nuevo para moverla a otro lugar.</span>
     </div>
 
     <div class="card p-4 shadow mb-3">
       <h5 class="mb-3" id="orgChartTitle"></h5>
       <div id="orgChartCanvas" class="mb-4"></div>
+
+      <div id="orgHeldBar" class="d-flex align-items-center gap-2 mb-3 hidden"></div>
 
       <p class="text-secondary small text-uppercase mb-2">Banco de palabras</p>
       <div id="orgWordBank" class="d-flex flex-wrap gap-2 mb-3"></div>
@@ -910,7 +972,7 @@ function getBlankDef(id) {
 
 function orgBoxHTML(node) {
   const filled = orgPlacements[node.id];
-  return `<div class="org-slot" data-blank="${node.id}">
+  return `<div class="org-slot${filled ? ' filled' : ''}" data-blank="${node.id}">
     <span>${filled ? filled : 'Coloca aquí'}</span>
     ${node.sublabel ? '<span class="org-sublabel">' + node.sublabel + '</span>' : ''}
   </div>`;
@@ -951,57 +1013,124 @@ function renderHQChart() {
 function attachSlotEvents() {
   document.querySelectorAll('.org-slot').forEach(slot => {
     slot.addEventListener('click', () => onSlotClick(slot.dataset.blank));
-    slot.addEventListener('dragover', e => e.preventDefault());
+    slot.addEventListener('dragover', e => { e.preventDefault(); slot.classList.add('dragover'); });
+    slot.addEventListener('dragleave', () => slot.classList.remove('dragover'));
     slot.addEventListener('drop', e => {
       e.preventDefault();
+      slot.classList.remove('dragover');
       const word = e.dataTransfer.getData('text/plain');
       if (word) placeWord(slot.dataset.blank, word);
     });
   });
 }
 
+// orgSelectedWord is now either null, or { word, fromSlot } where fromSlot is
+// the blank id it was picked up from (null if it came straight from the bank).
+// This lets a placed piece be picked back up and dropped somewhere else,
+// including swapping with whatever piece is already sitting in the target slot.
+
 function renderOrgWordBank() {
   const bank = document.getElementById('orgWordBank');
   bank.innerHTML = '';
   if (!orgWordBank.length) {
     bank.innerHTML = '<span class="text-secondary small">Todas las palabras están colocadas.</span>';
+  } else {
+    orgWordBank.forEach(word => {
+      const chip = document.createElement('div');
+      const isSelected = orgSelectedWord && orgSelectedWord.fromSlot === null && orgSelectedWord.word === word;
+      chip.className = 'org-chip' + (isSelected ? ' selected' : '');
+      chip.textContent = word;
+      chip.draggable = true;
+      chip.addEventListener('click', () => selectFromBank(word));
+      chip.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', word);
+      });
+      bank.appendChild(chip);
+    });
+  }
+  renderHeldBar();
+}
+
+function renderHeldBar() {
+  const bar = document.getElementById('orgHeldBar');
+  if (!orgSelectedWord) {
+    bar.classList.add('hidden');
+    bar.innerHTML = '';
     return;
   }
-  orgWordBank.forEach(word => {
-    const chip = document.createElement('div');
-    chip.className = 'org-chip' + (orgSelectedWord === word ? ' selected' : '');
-    chip.textContent = word;
-    chip.draggable = true;
-    chip.addEventListener('click', () => {
-      orgSelectedWord = orgSelectedWord === word ? null : word;
-      renderOrgWordBank();
-    });
-    chip.addEventListener('dragstart', e => {
-      e.dataTransfer.setData('text/plain', word);
-    });
-    bank.appendChild(chip);
-  });
+  bar.classList.remove('hidden');
+  bar.innerHTML = `
+    <span class="text-secondary small text-uppercase">Sosteniendo:</span>
+    <span class="org-chip selected" id="heldChip">${orgSelectedWord.word}</span>
+    <span class="text-secondary small">Toca un espacio para colocarla, o toca aquí para soltarla</span>
+  `;
+  document.getElementById('heldChip').addEventListener('click', cancelHeldWord);
+}
+
+function selectFromBank(word) {
+  const isSameSelected = orgSelectedWord && orgSelectedWord.fromSlot === null && orgSelectedWord.word === word;
+  if (isSameSelected) {
+    orgSelectedWord = null;
+  } else {
+    returnHeldToOrigin();
+    orgSelectedWord = { word, fromSlot: null };
+  }
+  renderOrgWordBank();
+  rerenderActiveChart();
+}
+
+function cancelHeldWord() {
+  returnHeldToOrigin();
+  orgSelectedWord = null;
+  renderOrgWordBank();
+  rerenderActiveChart();
+}
+
+// Puts whatever is currently held back where it came from (bank or its old slot),
+// without touching orgSelectedWord itself.
+function returnHeldToOrigin() {
+  if (!orgSelectedWord) return;
+  if (orgSelectedWord.fromSlot) {
+    orgPlacements[orgSelectedWord.fromSlot] = orgSelectedWord.word;
+  } else {
+    if (!orgWordBank.includes(orgSelectedWord.word)) orgWordBank.push(orgSelectedWord.word);
+  }
 }
 
 function onSlotClick(blankId) {
-  const current = orgPlacements[blankId];
-  if (current) {
-    // return word already in slot back to bank
-    orgWordBank.push(current);
-    orgPlacements[blankId] = null;
-    renderOrgWordBank();
-    rerenderActiveChart();
-    return;
-  }
+  const occupant = orgPlacements[blankId];
+
   if (orgSelectedWord) {
-    placeWord(blankId, orgSelectedWord);
+    // Dropping a held piece onto this slot.
+    if (occupant) {
+      // Slot occupied: swap if the held piece came from another slot,
+      // otherwise bump the occupant back to the bank.
+      if (orgSelectedWord.fromSlot) {
+        orgPlacements[orgSelectedWord.fromSlot] = occupant;
+      } else {
+        orgWordBank.push(occupant);
+      }
+    }
+    if (orgSelectedWord.fromSlot === null) {
+      const idx = orgWordBank.indexOf(orgSelectedWord.word);
+      if (idx !== -1) orgWordBank.splice(idx, 1);
+    }
+    orgPlacements[blankId] = orgSelectedWord.word;
+    orgSelectedWord = null;
+  } else if (occupant) {
+    // Pick this piece up so it can be moved elsewhere.
+    orgPlacements[blankId] = null;
+    orgSelectedWord = { word: occupant, fromSlot: blankId };
   }
+
+  renderOrgWordBank();
+  rerenderActiveChart();
 }
 
+// Drag-and-drop path (bank chip dragged straight onto a slot).
 function placeWord(blankId, word) {
   const idx = orgWordBank.indexOf(word);
   if (idx === -1) return;
-  // if slot already has a word, return it to bank first
   if (orgPlacements[blankId]) orgWordBank.push(orgPlacements[blankId]);
   orgWordBank.splice(idx, 1);
   orgPlacements[blankId] = word;
